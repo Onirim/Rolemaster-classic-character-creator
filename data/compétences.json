@@ -240,7 +240,94 @@
       "category": "Concentration",
       "type": "Principale",
 	  "special" : "defense-adrenale"
+    },
+	{
+      "id": "arts-martiaux-frappe-1",
+      "name": "Arts martiaux frappe 1",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "frappe",
+	  "tier": 1,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-frappe-2",
+      "name": "Arts martiaux frappe 2",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "frappe",
+	  "tier": 2,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-frappe-3",
+      "name": "Arts martiaux frappe 3",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "frappe",
+	  "tier": 3,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-frappe-4",
+      "name": "Arts martiaux frappe 4",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "frappe",
+	  "tier": 4,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-projection-1",
+      "name": "Arts martiaux projection 1",
+      "characteristics": ["AG/AG/FO"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "projection",
+	  "tier": 1,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-projection-2",
+      "name": "Arts martiaux projection 2",
+      "characteristics": ["AG/AG/FO"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "projection",
+	  "tier": 2,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-projection-3",
+      "name": "Arts martiaux projection 3",
+      "characteristics": ["AG/AG/FO"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "projection",
+	  "tier": 3,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "arts-martiaux-projection-4",
+      "name": "Arts martiaux projection 4",
+      "characteristics": ["AG/AG/FO"],
+      "category": "Combat",
+      "type": "Principale",
+	  "tierGroup": "projection",
+	  "tier": 4,
+	  "special" : "arts-martiaux"
+    },
+	{
+      "id": "developpement-corporel",
+      "name": "Développement corporel",
+      "characteristics": ["aucune"],
+      "category": "Développement corporel",
+      "type": "Principale",
+	  "special" : "developpement-corporel"
     }
-	
   ]
 }

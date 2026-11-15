@@ -249,8 +249,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .skill-special-input { width: 100%; min-height: 31px; padding: 0 8px; border: 1px solid #3d4b43; border-radius: 4px; background: #101815; color: #e0e9e3; font: 10px 'DM Sans', sans-serif; }
 .skill-special-input::placeholder { color: #718078; }
 .skill-purchase { display: flex; flex: 0 0 100px; flex-direction: column; align-items: flex-end; gap: 7px; }
-.next-rank-cost { color: #d5c48e; font-size: 8px; font-weight: 600; text-align: right; }
-.buy-rank-button { min-height: 30px; padding: 0 10px; border: 1px solid #60715e; border-radius: 4px; background: #2d4133; color: #e1eadf; font: 600 9px 'DM Sans', sans-serif; cursor: pointer; }
+.skill-cost-badge { min-width: 48px; padding: 3px 7px; border: 1px solid #62563b; border-radius: 4px; background: #292a21; color: #ead593; font: 700 13px/1.2 'Manrope', sans-serif; text-align: center; }
+.buy-rank-button { width: 100%; min-height: 34px; padding: 4px 5px; border: 1px solid #60715e; border-radius: 4px; background: #2d4133; color: #e1eadf; font: 600 11px/1.2 'DM Sans', sans-serif; cursor: pointer; }
 .buy-rank-button:hover:not(:disabled) { border-color: #c0a464; background: #3a4d39; }
 .buy-rank-button:disabled { border-color: #343d37; background: #252d28; color: #707b73; cursor: not-allowed; }
 .acquired-skill-list { min-height: 176px; display: grid; align-content: start; gap: 8px; padding: 10px; border: 1px dashed #46554b; border-radius: 6px; transition: border-color .15s ease, background .15s ease; }
@@ -264,6 +264,7 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .acquired-rank-info strong { color: #ddc784; font: 600 9px 'Manrope', sans-serif; }
 .acquired-rank-info span { color: #aeb9b1; font-size: 8px; }
 .remove-rank-button { width: 25px; height: 25px; flex: 0 0 25px; border: 1px solid #4a5750; border-radius: 4px; background: #28332d; color: #c3cdc6; font-size: 16px; cursor: pointer; }
+.remove-rank-button:disabled { opacity: .4; cursor: not-allowed; }
 .remove-rank-button:hover { border-color: #ae7e6f; color: #f0b5a5; }
 .skill-purchase-status { min-height: 17px; margin: 12px 2px 0; color: #a4b0a9; font-size: 9px; line-height: 1.6; }
 
@@ -344,7 +345,6 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .skill-row { align-items: flex-start; padding: 11px 10px; gap: 8px; }
   .skill-primary h3 { font-size: 10px; }
   .skill-purchase { flex-basis: 82px; }
-  .next-rank-cost { font-size: 7px; }
   .acquired-skill-list { min-height: 125px; }
   .acquired-skill-list:empty::before { min-height: 100px; }
   .art-caption { bottom: 12%; }
@@ -481,7 +481,6 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .skill-special-label { color: #68766f; }
 :root[data-theme="light"] .skill-special-input { border-color: #dce4df; background: #fff; color: #263b32; }
 :root[data-theme="light"] .skill-special-input::placeholder { color: #9aa49f; }
-:root[data-theme="light"] .next-rank-cost { color: #806734; }
 :root[data-theme="light"] .buy-rank-button { border-color: #c4d0c7; background: #eaf1eb; color: #294a40; }
 :root[data-theme="light"] .buy-rank-button:hover:not(:disabled) { border-color: #bd9854; background: #f2f4e9; }
 :root[data-theme="light"] .buy-rank-button:disabled { border-color: #e3e8e4; background: #f1f3f1; color: #9aa49f; }
@@ -537,19 +536,15 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .skill-offer-details, .skill-characteristic-chip, .skill-special-label { font-size: 11px; }
 .skill-special-input { font-size: 12px; }
 .skill-purchase { flex-basis: 116px; }
-.next-rank-cost { width: 100%; min-height: 58px; padding: 7px 6px; display: grid; justify-items: center; align-content: center; gap: 2px; border: 1px solid #62563b; border-radius: 5px; background: #292a21; color: #d8c790; font-size: 12px; font-weight: 600; line-height: 1.2; text-align: center; }
-.next-rank-cost strong { color: #f0d58d; font: 800 19px/1.1 'Manrope', sans-serif; }
-.next-rank-cost small { color: #c7b67e; font-size: 10px; font-weight: 600; }
-.buy-rank-button { min-height: 34px; font-size: 12px; }
+.skill-cost-badge { font-size: 14px; }
+.buy-rank-button { font-size: 11px; }
 .acquired-skill-list:empty::before { font-size: 11px; }
 .acquired-skill-details h3 { font-size: 12px; }
 .acquired-skill-details p, .acquired-rank-info span { font-size: 10px; }
 .acquired-rank-info strong { font-size: 11px; }
 .skill-purchase-status { font-size: 11px; }
 
-:root[data-theme="light"] .next-rank-cost { border-color: #e5d7b8; background: #f8f3e7; color: #6d5b35; }
-:root[data-theme="light"] .next-rank-cost strong { color: #72551d; }
-:root[data-theme="light"] .next-rank-cost small { color: #826d42; }
+:root[data-theme="light"] .skill-cost-badge { border-color: #e5d7b8; background: #f8f3e7; color: #72551d; }
 
 @media (max-width: 680px) {
   .theme-control { font-size: 11px; }
@@ -570,10 +565,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .skill-purchase { flex-basis: 100px; }
   .skill-primary h3 { font-size: 12px; }
   .skill-offer-details, .skill-characteristic-chip, .skill-special-label { font-size: 10px; }
-  .next-rank-cost { min-height: 54px; font-size: 10px; }
-  .next-rank-cost strong { font-size: 17px; }
-  .next-rank-cost small { font-size: 9px; }
-  .buy-rank-button { font-size: 11px; }
+  .skill-cost-badge { font-size: 13px; }
+  .buy-rank-button { font-size: 10px; }
   .acquired-skill-details h3 { font-size: 11px; }
   .acquired-skill-details p, .acquired-rank-info span { font-size: 9px; }
 }

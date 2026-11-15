@@ -469,6 +469,45 @@ function getNextSkillCost(skill, rank, key) {
   };
 }
 
+function getMartialArtsTier(skill) {
+  if (skill.special !== 'arts-martiaux' || !skill.tierGroup || !Number.isInteger(skill.tier)) return null;
+  return { group: skill.tierGroup, tier: skill.tier };
+}
+
+function getSkillRankById(skillId) {
+  return acquiredSkills.get(getSkillKey(skillId))?.rank ?? 0;
+}
+
+function getMartialArtsPurchaseBlocker(skill) {
+  const progression = getMartialArtsTier(skill);
+  if (!progression || progression.tier <= 1) return null;
+
+  const previousTierSkill = skills.find((entry) => {
+    const candidate = getMartialArtsTier(entry);
+    return candidate?.group === progression.group && candidate.tier === progression.tier - 1;
+  });
+  const previousTierRank = previousTierSkill ? getSkillRankById(previousTierSkill.id) : 0;
+  const currentTierRank = getSkillRankById(skill.id);
+  const requiredPreviousTierRank = currentTierRank + 1;
+  return previousTierRank >= requiredPreviousTierRank
+    ? null
+    : { tier: progression.tier - 1, requiredRank: requiredPreviousTierRank };
+}
+
+function getMartialArtsRemovalBlocker(skill, state) {
+  const progression = getMartialArtsTier(skill);
+  if (!progression || progression.tier >= 4) return null;
+
+  const nextTierSkill = skills.find((entry) => {
+    const candidate = getMartialArtsTier(entry);
+    return candidate?.group === progression.group && candidate.tier === progression.tier + 1;
+  });
+  const nextTierRank = nextTierSkill ? getSkillRankById(nextTierSkill.id) : 0;
+  return state.rank - 1 >= nextTierRank
+    ? null
+    : { tier: progression.tier + 1, rank: nextTierRank };
+}
+
 function populateSkillCategoryFilter() {
   const categoryFilter = document.querySelector('#skill-category-filter');
   const selectedCategory = categoryFilter.value;
@@ -530,8 +569,8 @@ function renderSkillList() {
 
     const purchase = document.createElement('div');
     purchase.className = 'skill-purchase';
-    const nextCostLabel = document.createElement('div');
-    nextCostLabel.className = 'next-rank-cost';
+    const costBadge = document.createElement('span');
+    costBadge.className = 'skill-cost-badge';
     const buyButton = document.createElement('button');
     buyButton.type = 'button';
     buyButton.className = 'buy-rank-button';
@@ -545,24 +584,17 @@ function renderSkillList() {
       const missingSpecial = Boolean(needsCustomSkillSpecial(skill) && !special);
       const noCost = cost === undefined || cost === null;
       const notEnough = typeof cost === 'number' && baseDevelopmentPoints !== null && cost > baseDevelopmentPoints - getTotalSkillSpend();
-      row.draggable = !missingSpecial && !noCost && !notEnough && baseDevelopmentPoints !== null;
+      const tierBlocker = getMartialArtsPurchaseBlocker(skill);
+      const costDefinition = getSkillCostDefinition(skill, costInfo.categoryCostIndex).join('/');
+      costBadge.textContent = costDefinition || '—';
+      row.draggable = !missingSpecial && !noCost && !notEnough && !tierBlocker && baseDevelopmentPoints !== null;
       buyButton.disabled = !row.draggable;
-      if (missingSpecial) nextCostLabel.textContent = 'Précisez une spécialité';
-      else if (baseDevelopmentPoints === null) nextCostLabel.textContent = 'Budget en attente';
-      else if (noCost) nextCostLabel.textContent = 'Rang suivant indisponible';
-      else if (notEnough) nextCostLabel.textContent = `Il manque ${cost - (baseDevelopmentPoints - getTotalSkillSpend())} PD`;
-      else {
-        const caption = document.createElement('span');
-        caption.textContent = 'Prochain rang';
-        const amount = document.createElement('strong');
-        amount.textContent = `${cost} PD`;
-        nextCostLabel.replaceChildren(caption, amount);
-        if (isWeaponCategorySkill(skill)) {
-          const tariff = document.createElement('small');
-          tariff.textContent = `Tarif ${costInfo.categoryCostIndex + 1}/6`;
-          nextCostLabel.append(tariff);
-        }
-      }
+      buyButton.title = tierBlocker
+        ? `Achetez d’abord le rang ${tierBlocker.requiredRank} du tier ${tierBlocker.tier}.`
+        : '';
+      buyButton.textContent = noCost
+        ? 'Rang indisponible'
+        : tierBlocker ? `Tier ${tierBlocker.tier} requis` : `Acheter pour ${cost} PD`;
     };
     if (specialInput) {
       specialInput.addEventListener('input', () => {
@@ -571,7 +603,7 @@ function renderSkillList() {
       });
     }
     buyButton.addEventListener('click', () => purchaseSkill(skill.id, getSkillSpecial(skill, row)));
-    purchase.append(nextCostLabel, buyButton);
+    purchase.append(costBadge, buyButton);
     row.append(primary, purchase);
     row.addEventListener('dragstart', (event) => {
       if (event.target.closest('input, button') || !row.draggable) {
@@ -607,6 +639,11 @@ function purchaseSkill(skillId, special = '') {
   const costInfo = getNextSkillCost(skill, state.rank, key);
   const cost = costInfo.cost;
   const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
+  const tierBlocker = getMartialArtsPurchaseBlocker(skill);
+  if (tierBlocker) {
+    document.querySelector('#skill-purchase-status').textContent = `Achetez d’abord le rang ${tierBlocker.requiredRank} du tier ${tierBlocker.tier} avant de progresser dans ce tier.`;
+    return;
+  }
   if (cost === undefined || cost === null) {
     document.querySelector('#skill-purchase-status').textContent = 'Aucun coût supplémentaire n’est défini pour ce rang.';
     return;
@@ -642,7 +679,7 @@ function renderAcquiredSkills() {
     name.textContent = skill.name;
     const subtitle = document.createElement('p');
     subtitle.textContent = isWeaponCategorySkill(skill)
-      ? `${skill.category} · tarif ${state.categoryCostIndex + 1}/6`
+      ? `${skill.category} · Coût ${getSkillCostDefinition(skill, state.categoryCostIndex).join('/')}`
       : state.special ? `${state.special} · ${skill.category}` : skill.category;
     details.append(name, subtitle);
 
@@ -658,9 +695,18 @@ function renderAcquiredSkills() {
     removeButton.type = 'button';
     removeButton.className = 'remove-rank-button';
     removeButton.textContent = '−';
-    removeButton.title = 'Retirer le dernier rang et récupérer ses points';
+    const removalBlocker = getMartialArtsRemovalBlocker(skill, state);
+    removeButton.disabled = Boolean(removalBlocker);
+    removeButton.title = removalBlocker
+      ? `Retirez d’abord les rangs du tier ${removalBlocker.tier}.`
+      : 'Retirer le dernier rang et récupérer ses points';
     removeButton.setAttribute('aria-label', `Retirer le dernier rang de ${skill.name}`);
     removeButton.addEventListener('click', () => {
+      const currentBlocker = getMartialArtsRemovalBlocker(skill, state);
+      if (currentBlocker) {
+        document.querySelector('#skill-purchase-status').textContent = `Retirez d’abord les rangs du tier ${currentBlocker.tier}.`;
+        return;
+      }
       const refund = getSkillCostAtRank(skill, state.categoryCostIndex, state.rank - 1);
       if (typeof refund !== 'number') return;
       state.rank -= 1;
