@@ -407,7 +407,9 @@ function needsCustomSkillSpecial(skill) {
 function getSkillCostEntry(skill) {
   const profession = professionsById.get(professionSelect.value);
   if (!profession || !Array.isArray(profession.skillCost)) return null;
-  return profession.skillCost.find((entry) => entry.skillId === skill.id || entry.name === skill.id) || null;
+  return profession.skillCost.find((entry) =>
+    entry.skillId === skill.id || entry.name === skill.id || entry.name === skill.special
+  ) || null;
 }
 
 function getWeaponCategoryCostEntry() {
@@ -503,9 +505,10 @@ function renderSkillList() {
       chip.className = 'skill-characteristic-chip';
       chip.textContent = reference.split('/').map((id) => {
         const characteristicId = id.trim();
-        return characteristicId.toLocaleLowerCase('fr-FR') === 'variable'
-          ? 'Variable'
-          : characteristicsById.get(characteristicId).name;
+        const placeholder = characteristicId.toLocaleLowerCase('fr-FR');
+        if (placeholder === 'variable') return 'Variable';
+        if (placeholder === 'aucune') return 'Aucune';
+        return characteristicsById.get(characteristicId).name;
       }).join(' / ');
       characteristics.append(chip);
     });
@@ -725,7 +728,7 @@ async function loadRulesData() {
     skills.forEach((skill) => {
       const missingCharacteristics = skill.characteristics
         .flatMap((reference) => reference.split('/').map((id) => id.trim()))
-        .filter((id) => id.toLocaleLowerCase('fr-FR') !== 'variable')
+        .filter((id) => !['variable', 'aucune'].includes(id.toLocaleLowerCase('fr-FR')))
         .filter((id) => !characteristicsById.has(id));
       if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
     });
