@@ -16,7 +16,7 @@
         { "name": "escalade", "costs": ["3/7"] },
         { "name": "natation", "costs": ["2/6"] },
         { "name": "equitation", "costs": ["2/6"] },
-        { "name": "desarmement-pieges", "costs": ["3/8"] },
+        { "name": "desarmement-piege", "costs": ["3/8"] },
         { "name": "crochetage", "costs": ["3/9"] },
         { "name": "filature-dissimulation", "costs": ["2/5"] },
         { "name": "perception", "costs": ["2/5"] },

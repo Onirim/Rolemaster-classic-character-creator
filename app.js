@@ -501,7 +501,12 @@ function renderSkillList() {
     skill.characteristics.forEach((reference) => {
       const chip = document.createElement('span');
       chip.className = 'skill-characteristic-chip';
-      chip.textContent = reference.split('/').map((id) => characteristicsById.get(id.trim()).name).join(' / ');
+      chip.textContent = reference.split('/').map((id) => {
+        const characteristicId = id.trim();
+        return characteristicId.toLocaleLowerCase('fr-FR') === 'variable'
+          ? 'Variable'
+          : characteristicsById.get(characteristicId).name;
+      }).join(' / ');
       characteristics.append(chip);
     });
     primary.append(characteristics);
@@ -709,6 +714,7 @@ async function loadRulesData() {
     skills.forEach((skill) => {
       const missingCharacteristics = skill.characteristics
         .flatMap((reference) => reference.split('/').map((id) => id.trim()))
+        .filter((id) => id.toLocaleLowerCase('fr-FR') !== 'variable')
         .filter((id) => !characteristicsById.has(id));
       if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
     });
@@ -718,6 +724,7 @@ async function loadRulesData() {
     raceSelect.disabled = false;
     updateStepAvailability();
   } catch (error) {
+    console.error('Échec du chargement des fichiers de règles :', error);
     professionSelect.replaceChildren(new Option('Professions indisponibles', ''));
     professionError.hidden = false;
     raceSelect.replaceChildren(new Option('Races indisponibles', ''));
