@@ -55,7 +55,7 @@
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
-	  "special" : "none"
+	  "special" : "armure"
     },
 	{
       "id": "cuir-rigide",
@@ -63,7 +63,7 @@
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
-	  "special" : "none"
+	  "special" : "armure"
     },
 	{
       "id": "cotte-de-maille",
@@ -71,7 +71,7 @@
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
-	  "special" : "none"
+	  "special" : "armure"
     },
 	{
       "id": "plate",
@@ -79,7 +79,7 @@
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
-	  "special" : "none"
+	  "special" : "armure"
     },
     {
       "id": "escalade",
@@ -176,6 +176,71 @@
       "category": "Direction de sort",
       "type": "Principale",
 	  "special" : "none"
+    },
+	{
+      "id": "embuscade",
+      "name": "Embuscade",
+      "characteristics": ["aucune"],
+      "category": "Mortelle",
+      "type": "Principale",
+	  "special" : "embuscade"
+    },
+	{
+      "id": "linguistique",
+      "name": "Linguistique",
+      "characteristics": ["aucune"],
+      "category": "Linguistique",
+      "type": "Principale",
+	  "special" : "linguistique"
+    },
+	{
+      "id": "mouvement-adrenal-force",
+      "name": "Mouvement adrénal force",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "mouvements-adrenaux"
+    },
+	{
+      "id": "mouvement-adrenal-vitesse",
+      "name": "Mouvement adrénal vitesse",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "mouvements-adrenaux"
+    },
+	{
+      "id": "mouvement-adrenal-equilibre",
+      "name": "Mouvement adrénal équilibre",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "mouvements-adrenaux"
+    },
+	{
+      "id": "mouvement-adrenal-bond",
+      "name": "Mouvement adrénal bond",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "mouvements-adrenaux"
+    },
+	{
+      "id": "mouvement-adrenal-reception",
+      "name": "Mouvement adrénal réception",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "mouvements-adrenaux"
+    },
+	{
+      "id": "defense-adrenale",
+      "name": "Défense adrénale",
+      "characteristics": ["aucune"],
+      "category": "Concentration",
+      "type": "Principale",
+	  "special" : "defense-adrenale"
     }
+	
   ]
 }
