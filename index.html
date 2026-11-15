@@ -131,12 +131,11 @@
               <div class="race-selection">
                 <label class="select-label" for="race-select">Race</label>
                 <div class="select-wrap">
-                  <select id="race-select" name="race" aria-describedby="race-description" disabled>
+                  <select id="race-select" name="race" aria-label="Race" disabled>
                     <option value="">Chargement des races…</option>
                   </select>
                   <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
                 </div>
-                <p class="race-description" id="race-description" aria-live="polite">Sélectionnez une race pour découvrir ses origines.</p>
                 <p class="data-error" id="race-error" role="alert" hidden>Impossible de charger les races.</p>
               </div>
             </section>
@@ -149,6 +148,12 @@
               <p class="detail-label">CARACTÉRISTIQUES PRINCIPALES</p>
               <div class="stat-list" id="prime-requisites"></div>
               <div class="detail-note"><span class="note-mark">i</span><span>Ces caractéristiques sont les prérequis principaux de la profession.</span></div>
+              <section class="race-flavor" id="race-flavor" aria-live="polite" hidden>
+                <div class="detail-divider"></div>
+                <p class="detail-label">PRÉSENTATION DE LA RACE</p>
+                <h3 id="race-detail-name"></h3>
+                <p class="race-detail-description" id="race-detail-description"></p>
+              </section>
             </section>
 
             <div class="empty-detail" id="empty-detail">

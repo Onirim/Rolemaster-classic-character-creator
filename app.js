@@ -11,6 +11,7 @@ const emptyDetail = document.querySelector('#empty-detail');
 const professionsById = new Map();
 const racesById = new Map();
 const characteristicsById = new Map();
+let selectedRace = null;
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -60,6 +61,7 @@ function renderProfession(profession) {
   const hasProfession = Boolean(profession);
   professionDetail.hidden = !hasProfession;
   emptyDetail.hidden = hasProfession;
+  renderRacePresentation();
 
   if (!hasProfession) return;
 
@@ -76,10 +78,14 @@ function renderProfession(profession) {
   }));
 }
 
-function renderRace(race) {
-  document.querySelector('#race-description').textContent = race
-    ? race.description
-    : 'Sélectionnez une race pour découvrir ses origines.';
+function renderRacePresentation() {
+  const raceFlavor = document.querySelector('#race-flavor');
+  const shouldShow = Boolean(selectedRace && professionSelect.value);
+  raceFlavor.hidden = !shouldShow;
+  if (!shouldShow) return;
+
+  document.querySelector('#race-detail-name').textContent = selectedRace.name;
+  document.querySelector('#race-detail-description').textContent = selectedRace.description;
 }
 
 async function loadRulesData() {
@@ -137,7 +143,8 @@ professionSelect.addEventListener('change', () => {
   renderProfession(professionsById.get(professionSelect.value));
 });
 raceSelect.addEventListener('change', () => {
-  renderRace(racesById.get(raceSelect.value));
+  selectedRace = racesById.get(raceSelect.value) || null;
+  renderRacePresentation();
 });
 
 loadRulesData();
