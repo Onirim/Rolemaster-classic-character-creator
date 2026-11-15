@@ -312,8 +312,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .characteristics-heading h1 { font-size: 39px; }
   .characteristics-heading .intro { margin-bottom: 19px; }
   .roll-panel, .stat-panel { padding: 15px; }
-  .roll-grid { gap: 5px; }
-  .roll-card { min-height: 100px; padding-inline: 2px; }
+  .roll-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .roll-card { min-height: 96px; padding-inline: 3px; }
   .roll-invitation { font-size: 8px; }
   .roll-values { margin-top: 8px; gap: 4px; }
   .roll-metric { gap: 1px; font-size: 6px; }
@@ -496,3 +496,84 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .remove-rank-button { border-color: #dfe6e1; background: #fff; color: #607168; }
 :root[data-theme="light"] .remove-rank-button:hover { border-color: #ae7e6f; color: #9a4f43; }
 :root[data-theme="light"] .skill-purchase-status { color: #78847f; }
+
+/* Larger interface text for comfortable reading. */
+.brand-edition { font-size: 10px; }
+.theme-control, .theme-select-wrap select { font-size: 13px; }
+.step-tab { font-size: 14px; }
+.step-number { font-size: 11px; }
+.eyebrow { font-size: 11px; }
+.action-text strong { font-size: 14px; }
+.action-text small, .privacy-note { font-size: 12px; }
+.art-caption { font-size: 10px; }
+.art-caption strong { font-size: 11px; }
+.art-coordinate { font-size: 10px; }
+.page-footer { font-size: 9px; }
+.section-kicker, .detail-label, .required-label, .coming-soon { font-size: 10px; }
+.select-label { font-size: 13px; }
+.field-hint, .race-placeholder small, .empty-detail > span:last-child { font-size: 12px; }
+.data-error, .race-placeholder strong, .detail-note { font-size: 13px; }
+.detail-topline { font-size: 10px; }
+.detail-description, .race-detail-description { font-size: 13px; }
+.stat-chip { font-size: 12px; }
+.race-flavor h3 { font-size: 16px; }
+.empty-detail strong { font-size: 17px; }
+.back-button, .continue-button { font-size: 12px; }
+.progress-count { font-size: 11px; }
+.panel-instruction { font-size: 12px; }
+.roll-invitation { font-size: 11px; }
+.roll-metric { font-size: 9px; }
+.roll-assignment { font-size: 9px; }
+.roll-remove-zone { font-size: 10px; }
+.characteristic-name { font-size: 12px; }
+.characteristic-code { font-size: 10px; }
+.characteristic-assigned .score-separator { font-size: 12px; }
+.allocation-status { font-size: 11px; }
+.development-copy p:last-child { font-size: 12px; }
+.development-copy h2 { font-size: 20px; }
+.skill-filter-row { font-size: 12px; }
+.skill-category-filter-wrap select { font-size: 12px; }
+.skill-primary h3 { font-size: 14px; }
+.skill-offer-details, .skill-characteristic-chip, .skill-special-label { font-size: 11px; }
+.skill-special-input { font-size: 12px; }
+.skill-purchase { flex-basis: 116px; }
+.next-rank-cost { width: 100%; min-height: 58px; padding: 7px 6px; display: grid; justify-items: center; align-content: center; gap: 2px; border: 1px solid #62563b; border-radius: 5px; background: #292a21; color: #d8c790; font-size: 12px; font-weight: 600; line-height: 1.2; text-align: center; }
+.next-rank-cost strong { color: #f0d58d; font: 800 19px/1.1 'Manrope', sans-serif; }
+.next-rank-cost small { color: #c7b67e; font-size: 10px; font-weight: 600; }
+.buy-rank-button { min-height: 34px; font-size: 12px; }
+.acquired-skill-list:empty::before { font-size: 11px; }
+.acquired-skill-details h3 { font-size: 12px; }
+.acquired-skill-details p, .acquired-rank-info span { font-size: 10px; }
+.acquired-rank-info strong { font-size: 11px; }
+.skill-purchase-status { font-size: 11px; }
+
+:root[data-theme="light"] .next-rank-cost { border-color: #e5d7b8; background: #f8f3e7; color: #6d5b35; }
+:root[data-theme="light"] .next-rank-cost strong { color: #72551d; }
+:root[data-theme="light"] .next-rank-cost small { color: #826d42; }
+
+@media (max-width: 680px) {
+  .theme-control { font-size: 11px; }
+  .step-tab { font-size: 12px; }
+  .eyebrow { font-size: 9px; }
+  .action-text strong { font-size: 12px; }
+  .action-text small, .privacy-note { font-size: 11px; }
+  .page-footer { font-size: 7px; }
+  .roll-invitation { font-size: 9px; }
+  .roll-metric { font-size: 8px; }
+  .roll-metric strong { font-size: 15px; }
+  .roll-potential strong { font-size: 9px; }
+  .roll-potential-result strong { font-size: 15px; }
+  .roll-assignment { font-size: 7px; }
+  .characteristic-name { font-size: 10px; }
+  .progress-count { font-size: 9px; }
+  .panel-instruction { font-size: 11px; }
+  .skill-purchase { flex-basis: 100px; }
+  .skill-primary h3 { font-size: 12px; }
+  .skill-offer-details, .skill-characteristic-chip, .skill-special-label { font-size: 10px; }
+  .next-rank-cost { min-height: 54px; font-size: 10px; }
+  .next-rank-cost strong { font-size: 17px; }
+  .next-rank-cost small { font-size: 9px; }
+  .buy-rank-button { font-size: 11px; }
+  .acquired-skill-details h3 { font-size: 11px; }
+  .acquired-skill-details p, .acquired-rank-info span { font-size: 9px; }
+}

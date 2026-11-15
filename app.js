@@ -527,7 +527,7 @@ function renderSkillList() {
 
     const purchase = document.createElement('div');
     purchase.className = 'skill-purchase';
-    const nextCostLabel = document.createElement('span');
+    const nextCostLabel = document.createElement('div');
     nextCostLabel.className = 'next-rank-cost';
     const buyButton = document.createElement('button');
     buyButton.type = 'button';
@@ -548,7 +548,18 @@ function renderSkillList() {
       else if (baseDevelopmentPoints === null) nextCostLabel.textContent = 'Budget en attente';
       else if (noCost) nextCostLabel.textContent = 'Rang suivant indisponible';
       else if (notEnough) nextCostLabel.textContent = `Il manque ${cost - (baseDevelopmentPoints - getTotalSkillSpend())} PD`;
-      else nextCostLabel.textContent = `Prochain rang · ${cost} PD${isWeaponCategorySkill(skill) ? ` · tarif ${costInfo.categoryCostIndex + 1}/6` : ''}`;
+      else {
+        const caption = document.createElement('span');
+        caption.textContent = 'Prochain rang';
+        const amount = document.createElement('strong');
+        amount.textContent = `${cost} PD`;
+        nextCostLabel.replaceChildren(caption, amount);
+        if (isWeaponCategorySkill(skill)) {
+          const tariff = document.createElement('small');
+          tariff.textContent = `Tarif ${costInfo.categoryCostIndex + 1}/6`;
+          nextCostLabel.append(tariff);
+        }
+      }
     };
     if (specialInput) {
       specialInput.addEventListener('input', () => {
