@@ -48,6 +48,11 @@
             <span>Race &amp; profession</span>
             <svg class="lock-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 6V4.75a3.25 3.25 0 1 1 6.5 0V6M3.5 6h9v7h-9V6Z"/></svg>
           </button>
+          <button class="step-tab is-locked" id="characteristics-step" type="button" disabled aria-disabled="true" title="Choisissez d’abord une race et une profession">
+            <span class="step-number">02</span>
+            <span>Caractéristiques</span>
+            <svg class="lock-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 6V4.75a3.25 3.25 0 1 1 6.5 0V6M3.5 6h9v7h-9V6Z"/></svg>
+          </button>
           <span class="nav-progress" aria-hidden="true"><span></span></span>
         </nav>
 
@@ -165,6 +170,46 @@
 
           <div class="creation-actions">
             <button class="back-button" id="back-home" type="button"><span aria-hidden="true">←</span> Retour à l’accueil</button>
+            <button class="continue-button" id="continue-characteristics" type="button" disabled>Caractéristiques <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="characteristics-view" id="characteristics" aria-labelledby="characteristics-title" hidden>
+          <div class="characteristics-heading">
+            <p class="eyebrow"><span class="eyebrow-line"></span> ÉTAPE 2 &nbsp;·&nbsp; ATTRIBUTION DES TIRAGES</p>
+            <h1 id="characteristics-title">Vos <em>caractéristiques</em></h1>
+            <p class="intro">Lancez les dix tirages, puis placez chacun sur la caractéristique de votre choix.</p>
+          </div>
+
+          <div class="characteristics-panels">
+            <section class="roll-panel" aria-labelledby="roll-title">
+              <div class="characteristics-panel-heading">
+                <div>
+                  <p class="section-kicker">LANCEZ LES DÉS</p>
+                  <h2 id="roll-title">Tirages</h2>
+                </div>
+                <span class="progress-count" id="roll-progress">0 / 10 lancés</span>
+              </div>
+              <p class="panel-instruction">Cliquez sur chaque case pour lancer un jet de 20 à 100.</p>
+              <div class="roll-grid" id="roll-grid" aria-label="Dix cases de tirage"></div>
+            </section>
+
+            <section class="stat-panel" aria-labelledby="stats-title">
+              <div class="characteristics-panel-heading">
+                <div>
+                  <p class="section-kicker">RÉPARTISSEZ VOS RÉSULTATS</p>
+                  <h2 id="stats-title">Caractéristiques</h2>
+                </div>
+                <span class="progress-count" id="assignment-progress">0 / 10 attribuées</span>
+              </div>
+              <p class="panel-instruction">Glissez un tirage sur une caractéristique, ou sélectionnez-le puis choisissez une case.</p>
+              <div class="stat-grid" id="characteristic-grid" aria-label="Caractéristiques du personnage"></div>
+            </section>
+          </div>
+
+          <p class="allocation-status" id="allocation-status" role="status" aria-live="polite">Les caractéristiques suivent l’ordre du fichier de configuration.</p>
+          <div class="creation-actions">
+            <button class="back-button" id="back-profession" type="button"><span aria-hidden="true">←</span> Retour à race &amp; profession</button>
             <button class="continue-button" type="button" disabled>Continuer <span aria-hidden="true">→</span></button>
           </div>
         </section>

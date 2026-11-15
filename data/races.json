@@ -14,7 +14,7 @@
       "characteristicDeterioration": 0,
       "recoveryMultiplier": 1,
       "startingLanguages": 2,
-      "hitPointsDie": "d8",
+      "hitPointsDie": 8,
       "maxHitPoints": 120,
       "backgroundOptions": 6
     }
