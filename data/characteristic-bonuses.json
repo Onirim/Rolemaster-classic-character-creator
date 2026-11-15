@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "rows": [
+    { "min": 102, "max": null, "label": "102+", "bonusD100": 35, "developmentPoints": 11, "powerPoints": 4 },
+    { "min": 101, "max": 101, "label": "101", "bonusD100": 30, "developmentPoints": 10, "powerPoints": 3 },
+    { "min": 100, "max": 100, "label": "100", "bonusD100": 25, "developmentPoints": 10, "powerPoints": 3 },
+    { "min": 98, "max": 99, "label": "98–99", "bonusD100": 20, "developmentPoints": 9, "powerPoints": 2 },
+    { "min": 95, "max": 97, "label": "95–97", "bonusD100": 15, "developmentPoints": 9, "powerPoints": 2 },
+    { "min": 90, "max": 94, "label": "90–94", "bonusD100": 10, "developmentPoints": 8, "powerPoints": 1 },
+    { "min": 85, "max": 89, "label": "85–89", "bonusD100": 5, "developmentPoints": 8, "powerPoints": 1 },
+    { "min": 75, "max": 84, "label": "75–84", "bonusD100": 5, "developmentPoints": 7, "powerPoints": 1 },
+    { "min": 60, "max": 74, "label": "60–74", "bonusD100": 0, "developmentPoints": 6, "powerPoints": 0 },
+    { "min": 40, "max": 59, "label": "40–59", "bonusD100": 0, "developmentPoints": 5, "powerPoints": 0 },
+    { "min": 25, "max": 39, "label": "25–39", "bonusD100": 0, "developmentPoints": 4, "powerPoints": 0 },
+    { "min": 15, "max": 24, "label": "15–24", "bonusD100": -5, "developmentPoints": 3, "powerPoints": 0 },
+    { "min": 10, "max": 14, "label": "10–14", "bonusD100": -5, "developmentPoints": 2, "powerPoints": 0 },
+    { "min": 5, "max": 9, "label": "5–9", "bonusD100": -10, "developmentPoints": 2, "powerPoints": 0 },
+    { "min": 3, "max": 4, "label": "3–4", "bonusD100": -15, "developmentPoints": 1, "powerPoints": 0 },
+    { "min": 2, "max": 2, "label": "2", "bonusD100": -20, "developmentPoints": 1, "powerPoints": 0 },
+    { "min": 1, "max": 1, "label": "1", "bonusD100": -25, "developmentPoints": 1, "powerPoints": 0 }
+  ]
+}

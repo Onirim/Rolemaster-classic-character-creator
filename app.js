@@ -1,9 +1,11 @@
 const homeView = document.querySelector('#accueil');
 const creationView = document.querySelector('#creation');
 const characteristicsView = document.querySelector('#characteristics');
+const skillsView = document.querySelector('#skills');
 const homeStep = document.querySelector('#home-step');
 const professionStep = document.querySelector('#profession-step');
 const characteristicsStep = document.querySelector('#characteristics-step');
+const skillsStep = document.querySelector('#skills-step');
 const professionSelect = document.querySelector('#profession-select');
 const raceSelect = document.querySelector('#race-select');
 const professionError = document.querySelector('#profession-error');
@@ -11,6 +13,7 @@ const raceError = document.querySelector('#race-error');
 const professionDetail = document.querySelector('#profession-detail');
 const emptyDetail = document.querySelector('#empty-detail');
 const continueButton = document.querySelector('#continue-characteristics');
+const continueSkillsButton = document.querySelector('#continue-skills');
 const professionsById = new Map();
 const racesById = new Map();
 const characteristicsById = new Map();
@@ -21,6 +24,8 @@ const rolls = Array(10).fill(null);
 const rollAssignments = new Map();
 let selectedRollIndex = null;
 let potentialTable = null;
+let skills = [];
+let characteristicBonusRows = [];
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -48,6 +53,7 @@ function showView(view) {
   const isHome = view === 'home';
   const isCreation = view === 'creation';
   const isCharacteristics = view === 'characteristics';
+  const isSkills = view === 'skills';
   if (isCreation) {
     professionStep.disabled = false;
     professionStep.removeAttribute('aria-disabled');
@@ -56,16 +62,20 @@ function showView(view) {
   homeView.hidden = !isHome;
   creationView.hidden = !isCreation;
   characteristicsView.hidden = !isCharacteristics;
+  skillsView.hidden = !isSkills;
   homeStep.classList.toggle('is-active', isHome);
   professionStep.classList.toggle('is-active', isCreation);
   characteristicsStep.classList.toggle('is-active', isCharacteristics);
+  skillsStep.classList.toggle('is-active', isSkills);
   homeStep.classList.toggle('is-locked', !isHome && professionStep.disabled);
   professionStep.classList.toggle('is-locked', professionStep.disabled);
   characteristicsStep.classList.toggle('is-locked', characteristicsStep.disabled);
+  skillsStep.classList.toggle('is-locked', skillsStep.disabled);
   homeStep.toggleAttribute('aria-current', isHome);
   professionStep.toggleAttribute('aria-current', isCreation);
   characteristicsStep.toggleAttribute('aria-current', isCharacteristics);
-  document.querySelector('.nav-progress span').style.width = isHome ? '0%' : isCreation ? '50%' : '100%';
+  skillsStep.toggleAttribute('aria-current', isSkills);
+  document.querySelector('.nav-progress span').style.width = isHome ? '0%' : isCreation ? '33%' : isCharacteristics ? '67%' : '100%';
 
   if (isHome) {
     window.location.hash = 'accueil';
@@ -73,21 +83,31 @@ function showView(view) {
   } else if (isCreation) {
     window.location.hash = 'creation';
     if (!professionSelect.disabled) professionSelect.focus();
-  } else {
+  } else if (isCharacteristics) {
     window.location.hash = 'characteristics';
     document.querySelector('#characteristics-title').focus();
+  } else {
+    window.location.hash = 'skills';
+    document.querySelector('#skills-title').focus();
   }
 }
 
 function updateStepAvailability() {
-  const canContinue = Boolean(professionSelect.value && raceSelect.value);
-  continueButton.disabled = !canContinue;
-  characteristicsStep.disabled = !canContinue;
-  characteristicsStep.toggleAttribute('aria-disabled', !canContinue);
-  characteristicsStep.title = canContinue ? '' : 'Choisissez d’abord une race et une profession';
-  characteristicsStep.classList.toggle('is-locked', !canContinue);
+  const hasIdentity = Boolean(professionSelect.value && raceSelect.value);
+  const allCharacteristicsAssigned = characteristicsInOrder.length === 10 && rollAssignments.size === 10;
+  continueButton.disabled = !hasIdentity;
+  characteristicsStep.disabled = !hasIdentity;
+  characteristicsStep.toggleAttribute('aria-disabled', !hasIdentity);
+  characteristicsStep.title = hasIdentity ? '' : 'Choisissez d’abord une race et une profession';
+  characteristicsStep.classList.toggle('is-locked', !hasIdentity);
+  continueSkillsButton.disabled = !allCharacteristicsAssigned;
+  skillsStep.disabled = !allCharacteristicsAssigned;
+  skillsStep.toggleAttribute('aria-disabled', !allCharacteristicsAssigned);
+  skillsStep.title = allCharacteristicsAssigned ? '' : 'Attribuez les dix caractéristiques pour continuer';
+  skillsStep.classList.toggle('is-locked', !allCharacteristicsAssigned);
 
-  if (!canContinue && !characteristicsView.hidden) showView('creation');
+  if (!hasIdentity && (!characteristicsView.hidden || !skillsView.hidden)) showView('creation');
+  else if (!allCharacteristicsAssigned && !skillsView.hidden) showView('characteristics');
 }
 
 function renderProfession(profession) {
@@ -317,28 +337,97 @@ function renderAllocation() {
   const rolledCount = rolls.filter((value) => value !== null).length;
   document.querySelector('#roll-progress').textContent = `${rolledCount} / 10 lancés`;
   document.querySelector('#assignment-progress').textContent = `${rollAssignments.size} / ${characteristicsInOrder.length} attribuées`;
+  renderDevelopmentPoints();
+  updateStepAvailability();
+}
+
+function renderDevelopmentPoints() {
+  const totalElement = document.querySelector('#development-points-total');
+  if (characteristicsInOrder.length !== 10 || rollAssignments.size !== 10 || characteristicBonusRows.length === 0) {
+    totalElement.textContent = '—';
+    return;
+  }
+
+  let total = 0;
+  for (const characteristic of characteristicsInOrder.filter((item) => item.development === true)) {
+    const rollIndex = rollAssignments.get(characteristic.id);
+    if (rollIndex === undefined) {
+      totalElement.textContent = '—';
+      return;
+    }
+    const temporary = getAssignedValues(rollIndex, characteristic.id).temporary;
+    const bonusRow = characteristicBonusRows.find((row) => temporary >= row.min && (row.max === null || temporary <= row.max));
+    if (!bonusRow) {
+      totalElement.textContent = '—';
+      return;
+    }
+    total += bonusRow.developmentPoints;
+  }
+  totalElement.textContent = String(total);
+}
+
+function renderSkillList() {
+  const skillList = document.querySelector('#skill-list');
+  skillList.replaceChildren(...skills.map((skill) => {
+    const row = document.createElement('article');
+    row.className = 'skill-row';
+    const primary = document.createElement('div');
+    primary.className = 'skill-primary';
+    const name = document.createElement('h3');
+    name.textContent = skill.name;
+    const characteristics = document.createElement('div');
+    characteristics.className = 'skill-characteristics';
+    skill.characteristics.forEach((id) => {
+      const chip = document.createElement('span');
+      chip.className = 'skill-characteristic-chip';
+      chip.textContent = characteristicsById.get(id).name;
+      characteristics.append(chip);
+    });
+    primary.append(name, characteristics);
+
+    const metadata = document.createElement('div');
+    metadata.className = 'skill-metadata';
+    const category = document.createElement('span');
+    category.className = 'skill-category';
+    category.textContent = skill.category;
+    const type = document.createElement('span');
+    type.className = 'skill-type';
+    type.textContent = skill.type;
+    metadata.append(category, type);
+    row.append(primary, metadata);
+    return row;
+  }));
+  const count = skills.length;
+  document.querySelector('#skills-count').textContent = `${count} compétence${count > 1 ? 's' : ''}`;
 }
 
 async function loadRulesData() {
   try {
-    const [professionsResponse, characteristicsResponse, racesResponse, potentialResponse] = await Promise.all([
+    const [professionsResponse, characteristicsResponse, racesResponse, potentialResponse, skillsResponse, bonusResponse] = await Promise.all([
       fetch('./data/professions.json'),
       fetch('./data/caractéristiques.json'),
       fetch('./data/races.json'),
-      fetch('./data/potential-table.json')
+      fetch('./data/potential-table.json'),
+      fetch('./data/compétences.json'),
+      fetch('./data/characteristic-bonuses.json')
     ]);
-    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok || !potentialResponse.ok) throw new Error('Fichiers de configuration indisponibles');
-    const [professionData, characteristicData, raceData, potentialData] = await Promise.all([
+    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok || !potentialResponse.ok || !skillsResponse.ok || !bonusResponse.ok) throw new Error('Fichiers de configuration indisponibles');
+    const [professionData, characteristicData, raceData, potentialData, skillData, bonusData] = await Promise.all([
       professionsResponse.json(),
       characteristicsResponse.json(),
       racesResponse.json(),
-      potentialResponse.json()
+      potentialResponse.json(),
+      skillsResponse.json(),
+      bonusResponse.json()
     ]);
     if (!Array.isArray(professionData.professions) || professionData.professions.length === 0) throw new Error('Aucune profession configurée');
     if (!Array.isArray(characteristicData.characteristics)) throw new Error('Liste de caractéristiques invalide');
     if (!Array.isArray(raceData.races) || raceData.races.length === 0) throw new Error('Aucune race configurée');
     if (!Array.isArray(potentialData.initialStatRanges) || !Array.isArray(potentialData.potentialRollRanges)) throw new Error('Table des potentiels invalide');
+    if (!Array.isArray(skillData.skills) || !Array.isArray(bonusData.rows)) throw new Error('Fichiers de compétences ou de bonus invalides');
     potentialTable = potentialData;
+    skills = skillData.skills;
+    characteristicBonusRows = bonusData.rows;
 
     characteristicData.characteristics.forEach((characteristic) => {
       characteristicsById.set(characteristic.id, characteristic);
@@ -362,6 +451,11 @@ async function loadRulesData() {
       racesById.set(race.id, race);
       raceSelect.add(new Option(race.name, race.id));
     });
+    skills.forEach((skill) => {
+      const missingCharacteristics = skill.characteristics.filter((id) => !characteristicsById.has(id));
+      if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
+    });
+    renderSkillList();
     professionSelect.disabled = false;
     raceSelect.disabled = false;
     updateStepAvailability();
@@ -370,16 +464,20 @@ async function loadRulesData() {
     professionError.hidden = false;
     raceSelect.replaceChildren(new Option('Races indisponibles', ''));
     raceError.hidden = false;
+    document.querySelector('#skills-error').hidden = false;
   }
 }
 
 document.querySelector('#new-character').addEventListener('click', () => showView('creation'));
 document.querySelector('#back-home').addEventListener('click', () => showView('home'));
 document.querySelector('#back-profession').addEventListener('click', () => showView('creation'));
+document.querySelector('#back-characteristics').addEventListener('click', () => showView('characteristics'));
 continueButton.addEventListener('click', () => showView('characteristics'));
+continueSkillsButton.addEventListener('click', () => showView('skills'));
 homeStep.addEventListener('click', () => showView('home'));
 professionStep.addEventListener('click', () => showView('creation'));
 characteristicsStep.addEventListener('click', () => showView('characteristics'));
+skillsStep.addEventListener('click', () => showView('skills'));
 
 professionSelect.addEventListener('change', () => {
   renderProfession(professionsById.get(professionSelect.value));

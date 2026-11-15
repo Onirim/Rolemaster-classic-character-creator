@@ -53,6 +53,11 @@
             <span>Caractéristiques</span>
             <svg class="lock-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 6V4.75a3.25 3.25 0 1 1 6.5 0V6M3.5 6h9v7h-9V6Z"/></svg>
           </button>
+          <button class="step-tab is-locked" id="skills-step" type="button" disabled aria-disabled="true" title="Attribuez les dix caractéristiques pour continuer">
+            <span class="step-number">03</span>
+            <span>Compétences principales</span>
+            <svg class="lock-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 6V4.75a3.25 3.25 0 1 1 6.5 0V6M3.5 6h9v7h-9V6Z"/></svg>
+          </button>
           <span class="nav-progress" aria-hidden="true"><span></span></span>
         </nav>
 
@@ -211,6 +216,42 @@
           <p class="allocation-status" id="allocation-status" role="status" aria-live="polite">Les caractéristiques suivent l’ordre du fichier de configuration.</p>
           <div class="creation-actions">
             <button class="back-button" id="back-profession" type="button"><span aria-hidden="true">←</span> Retour à race &amp; profession</button>
+            <button class="continue-button" id="continue-skills" type="button" disabled>Compétences principales <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="skills-view" id="skills" aria-labelledby="skills-title" hidden>
+          <div class="skills-heading">
+            <p class="eyebrow"><span class="eyebrow-line"></span> ÉTAPE 3 &nbsp;·&nbsp; APPRENTISSAGE</p>
+            <h1 id="skills-title">Compétences <em>principales</em></h1>
+            <p class="intro">Les points de développement disponibles sont calculés à partir des caractéristiques de développement du personnage.</p>
+          </div>
+
+          <section class="development-summary" aria-labelledby="development-title">
+            <div class="development-icon" aria-hidden="true">✦</div>
+            <div class="development-copy">
+              <p class="section-kicker">BUDGET DU PERSONNAGE</p>
+              <h2 id="development-title">Points de Développement disponibles</h2>
+              <p>Somme des points accordés par les caractéristiques dont le développement est activé.</p>
+            </div>
+            <strong class="development-total" id="development-points-total">—</strong>
+            <span class="development-unit">PD</span>
+          </section>
+
+          <section class="skills-list-section" aria-labelledby="skills-list-title">
+            <div class="skills-list-heading">
+              <div>
+                <p class="section-kicker">CATÉGORIE PRINCIPALE</p>
+                <h2 id="skills-list-title">Compétences disponibles</h2>
+              </div>
+              <span class="progress-count" id="skills-count">0 compétence</span>
+            </div>
+            <div class="skill-list" id="skill-list"></div>
+            <p class="data-error" id="skills-error" role="alert" hidden>Impossible de charger les compétences.</p>
+          </section>
+
+          <div class="creation-actions">
+            <button class="back-button" id="back-characteristics" type="button"><span aria-hidden="true">←</span> Retour aux caractéristiques</button>
             <button class="continue-button" type="button" disabled>Continuer <span aria-hidden="true">→</span></button>
           </div>
         </section>
