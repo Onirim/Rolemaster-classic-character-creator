@@ -5,7 +5,7 @@
       "id": "armes-tranchantes-1-main",
       "name": "Armes tranchantes 1 main",
       "characteristics": ["FO/FO/AG"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
@@ -13,7 +13,7 @@
       "id": "armes-contondantes-1-main",
       "name": "Armes contondantes 1 main",
       "characteristics": ["FO/FO/AG"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
@@ -21,7 +21,7 @@
       "id": "armes-2-mains",
       "name": "Armes à deux mains",
       "characteristics": ["FO/FO/AG"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
@@ -29,7 +29,7 @@
       "id": "armes-de-trait",
       "name": "Armes de trait",
       "characteristics": ["AG/AG/FO"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
@@ -37,7 +37,7 @@
       "id": "armes-de-jet",
       "name": "Armes de jet",
       "characteristics": ["AG/FO"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
@@ -45,39 +45,39 @@
       "id": "armes-de-hast",
       "name": "Armes d'hast",
       "characteristics": ["FO/FO/AG"],
-      "category": "Armes",
+      "category": "Combat",
       "type": "Principale",
       "special": "categorie-arme"
     },
     {
       "id": "cuir-souple",
       "name": "Manœuvre en cuir souple",
-      "characteristics": ["AG/FO"],
-      "category": "Manœuvre en armure",
+      "characteristics": ["AG"],
+      "category": "Combat",
       "type": "Principale",
 	  "special" : "none"
     },
 	{
       "id": "cuir-rigide",
       "name": "Manœuvre en cuir rigide",
-      "characteristics": ["AG/FO"],
-      "category": "Manœuvre en armure",
+      "characteristics": ["AG"],
+      "category": "Combat",
       "type": "Principale",
 	  "special" : "none"
     },
 	{
       "id": "cotte-de-maille",
       "name": "Manœuvre en cotte de mailles",
-      "characteristics": ["AG/FO"],
-      "category": "Manœuvre en armure",
+      "characteristics": ["AG"],
+      "category": "Combat",
       "type": "Principale",
 	  "special" : "none"
     },
 	{
       "id": "plate",
       "name": "Manœuvre en plate",
-      "characteristics": ["AG/FO"],
-      "category": "Manœuvre en armure",
+      "characteristics": ["AG"],
+      "category": "Combat",
       "type": "Principale",
 	  "special" : "none"
     },
@@ -85,7 +85,95 @@
       "id": "escalade",
       "name": "Escalade",
       "characteristics": ["AG"],
+      "category": "Sport",
+      "type": "Principale",
+	  "special" : "none"
+    }
+	{
+      "id": "natation",
+      "name": "Natation",
+      "characteristics": ["AG"],
+      "category": "Sport",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "equitation",
+      "name": "Équitation",
+      "characteristics": ["EM/AG"],
       "category": "Extérieur",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "desarmement-piege",
+      "name": "Désarmement de pièges",
+      "characteristics": ["IT/AG"],
+      "category": "Subterfuge",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "crochetage",
+      "name": "Crochetage",
+      "characteristics": ["IT/RS/AG"],
+      "category": "Subterfuge",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "filature-dissimulation",
+      "name": "Filature & Dissimulation",
+      "characteristics": ["AG/AD"],
+      "category": "Subterfuge",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "perception",
+      "name": "Perception",
+      "characteristics": ["IT/IT/RS"],
+      "category": "Perception",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "listes-sort",
+      "name": "Listes de sorts",
+      "characteristics": ["variable"],
+      "category": "Listes de sorts",
+      "type": "Principale",
+	  "special" : "listes-sort"
+    },
+	{
+      "id": "runes",
+      "name": "Runes",
+      "characteristics": ["EM/IT"],
+      "category": "Magique",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "concordance",
+      "name": "Concordance",
+      "characteristics": ["EM/IT"],
+      "category": "Magique",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "transmission",
+      "name": "Transmission",
+      "characteristics": ["IT"],
+      "category": "Magique",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "direction-sort",
+      "name": "Direction de sorts",
+      "characteristics": ["AG"],
+      "category": "Direction de sort",
       "type": "Principale",
 	  "special" : "none"
     }

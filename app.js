@@ -467,9 +467,23 @@ function getNextSkillCost(skill, rank, key) {
   };
 }
 
+function populateSkillCategoryFilter() {
+  const categoryFilter = document.querySelector('#skill-category-filter');
+  const selectedCategory = categoryFilter.value;
+  const categories = [...new Set(skills.map((skill) => skill.category).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'fr'));
+  categoryFilter.replaceChildren(new Option('Toutes les catégories', ''));
+  categories.forEach((category) => categoryFilter.add(new Option(category, category)));
+  categoryFilter.value = categories.includes(selectedCategory) ? selectedCategory : '';
+}
+
 function renderSkillList() {
   const skillList = document.querySelector('#skill-list');
-  skillList.replaceChildren(...skills.map((skill) => {
+  const selectedCategory = document.querySelector('#skill-category-filter').value;
+  const visibleSkills = selectedCategory
+    ? skills.filter((skill) => skill.category === selectedCategory)
+    : skills;
+  skillList.replaceChildren(...visibleSkills.map((skill) => {
     const row = document.createElement('article');
     row.className = 'skill-row';
     row.dataset.skillId = skill.id;
@@ -554,8 +568,10 @@ function renderSkillList() {
     updateOffer();
     return row;
   }));
-  const count = skills.length;
-  document.querySelector('#skills-count').textContent = `${count} compétence${count > 1 ? 's' : ''}`;
+  const count = visibleSkills.length;
+  document.querySelector('#skills-count').textContent = selectedCategory
+    ? `${count} / ${skills.length} affichées`
+    : `${count} compétence${count > 1 ? 's' : ''}`;
 }
 
 function purchaseSkill(skillId, special = '') {
@@ -696,6 +712,7 @@ async function loadRulesData() {
         .filter((id) => !characteristicsById.has(id));
       if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
     });
+    populateSkillCategoryFilter();
     renderSkillList();
     professionSelect.disabled = false;
     raceSelect.disabled = false;
@@ -710,6 +727,7 @@ async function loadRulesData() {
 }
 
 document.querySelector('#new-character').addEventListener('click', () => showView('creation'));
+document.querySelector('#skill-category-filter').addEventListener('change', renderSkillList);
 document.querySelector('#back-home').addEventListener('click', () => showView('home'));
 document.querySelector('#back-profession').addEventListener('click', () => showView('creation'));
 document.querySelector('#back-characteristics').addEventListener('click', () => showView('characteristics'));

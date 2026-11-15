@@ -232,6 +232,10 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .skills-list-heading { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 14px; }
 .skills-list-heading .section-kicker { margin-bottom: 7px; }
 .skills-list-heading h2 { margin: 0; color: var(--ink); font: 600 19px/1.3 'Manrope', sans-serif; }
+.skill-filter-row { display: flex; align-items: center; gap: 12px; margin: 0 0 13px; color: #aebbb4; font-size: 9px; font-weight: 600; }
+.skill-category-filter-wrap { width: min(100%, 250px); }
+.skill-category-filter-wrap select { min-height: 38px; padding-left: 11px; font-size: 10px; }
+.skill-category-filter-wrap > svg { right: 11px; width: 15px; height: 15px; }
 .skill-list { display: grid; gap: 9px; }
 .skill-row { min-height: 74px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 13px; border: 1px solid #35443d; border-radius: 6px; background: #141d19; cursor: grab; transition: border-color .15s ease, background .15s ease, opacity .15s ease; }
 .skill-row:hover { border-color: #6b806f; background: #1a251f; }
@@ -335,6 +339,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .skills-list-section { margin-top: 13px; padding: 17px 14px 12px; }
   .skill-purchase-layout { grid-template-columns: 1fr; gap: 0; }
   .skills-list-heading h2 { font-size: 16px; }
+  .skill-filter-row { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .skill-category-filter-wrap { width: 100%; }
   .skill-row { align-items: flex-start; padding: 11px 10px; gap: 8px; }
   .skill-primary h3 { font-size: 10px; }
   .skill-purchase { flex-basis: 82px; }

@@ -24,7 +24,7 @@
         { "name": "runes", "costs": ["7"] },
         { "name": "concordance", "costs": ["9"] },
         { "name": "transmission", "costs": ["25"] },
-        { "name": "direction de sort", "costs": ["20"] },
+        { "name": "direction-sort", "costs": ["20"] },
         { "name": "embuscade", "costs": ["3/8"] },
         { "name": "linguistique", "costs": ["3/*"] },
         { "name": "mouvements-adrenaux", "costs": ["2/6"] },
