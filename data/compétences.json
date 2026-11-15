@@ -6,7 +6,12 @@
       "name": "Armes tranchantes 1 main",
       "characteristics": ["FO", "AG"],
       "category": "Armes",
-      "type": "Principale"
+      "type": "Principale",
+      "special": "categorie-arme",
+      "costReference": {
+        "categoryName": "Catégories d'armes",
+        "index": 0
+      }
     },
     {
       "id": "escalade",

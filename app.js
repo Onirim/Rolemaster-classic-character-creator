@@ -26,6 +26,10 @@ let selectedRollIndex = null;
 let potentialTable = null;
 let skills = [];
 let characteristicBonusRows = [];
+let baseDevelopmentPoints = null;
+let selectedProfessionId = '';
+const acquiredSkills = new Map();
+const skillSpecialValues = new Map();
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -95,16 +99,17 @@ function showView(view) {
 function updateStepAvailability() {
   const hasIdentity = Boolean(professionSelect.value && raceSelect.value);
   const allCharacteristicsAssigned = characteristicsInOrder.length === 10 && rollAssignments.size === 10;
+  const canOpenSkills = hasIdentity && allCharacteristicsAssigned;
   continueButton.disabled = !hasIdentity;
   characteristicsStep.disabled = !hasIdentity;
   characteristicsStep.toggleAttribute('aria-disabled', !hasIdentity);
   characteristicsStep.title = hasIdentity ? '' : 'Choisissez d’abord une race et une profession';
   characteristicsStep.classList.toggle('is-locked', !hasIdentity);
-  continueSkillsButton.disabled = !allCharacteristicsAssigned;
-  skillsStep.disabled = !allCharacteristicsAssigned;
-  skillsStep.toggleAttribute('aria-disabled', !allCharacteristicsAssigned);
-  skillsStep.title = allCharacteristicsAssigned ? '' : 'Attribuez les dix caractéristiques pour continuer';
-  skillsStep.classList.toggle('is-locked', !allCharacteristicsAssigned);
+  continueSkillsButton.disabled = !canOpenSkills;
+  skillsStep.disabled = !canOpenSkills;
+  skillsStep.toggleAttribute('aria-disabled', !canOpenSkills);
+  skillsStep.title = canOpenSkills ? '' : 'Choisissez une race et une profession, puis attribuez les dix caractéristiques';
+  skillsStep.classList.toggle('is-locked', !canOpenSkills);
 
   if (!hasIdentity && (!characteristicsView.hidden || !skillsView.hidden)) showView('creation');
   else if (!allCharacteristicsAssigned && !skillsView.hidden) showView('characteristics');
@@ -344,7 +349,12 @@ function renderAllocation() {
 function renderDevelopmentPoints() {
   const totalElement = document.querySelector('#development-points-total');
   if (characteristicsInOrder.length !== 10 || rollAssignments.size !== 10 || characteristicBonusRows.length === 0) {
+    baseDevelopmentPoints = null;
     totalElement.textContent = '—';
+    document.querySelector('#development-points-base').textContent = '—';
+    document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+    renderSkillList();
+    renderAcquiredSkills();
     return;
   }
 
@@ -352,18 +362,71 @@ function renderDevelopmentPoints() {
   for (const characteristic of characteristicsInOrder.filter((item) => item.development === true)) {
     const rollIndex = rollAssignments.get(characteristic.id);
     if (rollIndex === undefined) {
+      baseDevelopmentPoints = null;
       totalElement.textContent = '—';
+      document.querySelector('#development-points-base').textContent = '—';
+      document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+      renderSkillList();
+      renderAcquiredSkills();
       return;
     }
     const temporary = getAssignedValues(rollIndex, characteristic.id).temporary;
     const bonusRow = characteristicBonusRows.find((row) => temporary >= row.min && (row.max === null || temporary <= row.max));
     if (!bonusRow) {
+      baseDevelopmentPoints = null;
       totalElement.textContent = '—';
+      document.querySelector('#development-points-base').textContent = '—';
+      document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+      renderSkillList();
+      renderAcquiredSkills();
       return;
     }
     total += bonusRow.developmentPoints;
   }
-  totalElement.textContent = String(total);
+  baseDevelopmentPoints = total;
+  const spent = getTotalSkillSpend();
+  document.querySelector('#development-points-base').textContent = String(total);
+  document.querySelector('#development-points-spent').textContent = String(spent);
+  totalElement.textContent = String(total - spent);
+  renderSkillList();
+  renderAcquiredSkills();
+}
+
+function getTotalSkillSpend() {
+  return [...acquiredSkills.values()].reduce((sum, entry) => sum + entry.spent, 0);
+}
+
+function getSkillCostSteps(skill) {
+  const profession = professionsById.get(professionSelect.value);
+  if (!profession || !Array.isArray(profession.skillCost)) return [];
+
+  let rawCost;
+  if (skill.costReference) {
+    const categoryEntry = profession.skillCost.find((entry) => entry.name === skill.costReference.categoryName);
+    rawCost = categoryEntry?.costs?.[skill.costReference.index];
+  } else {
+    const skillEntry = profession.skillCost.find((entry) => entry.skillId === skill.id);
+    rawCost = skillEntry?.costs?.[0];
+  }
+  if (rawCost === undefined) return [];
+  return String(rawCost).split('/').map((part) => {
+    const cost = Number(part);
+    return Number.isFinite(cost) ? cost : null;
+  });
+}
+
+function getSkillKey(skillId, special = '') {
+  return `${skillId}::${special.trim().toLocaleLowerCase('fr-FR')}`;
+}
+
+function getSkillSpecial(skill, row = null) {
+  if (!skill.special) return '';
+  return row?.querySelector('.skill-special-input')?.value.trim() ?? skillSpecialValues.get(skill.id) ?? '';
+}
+
+function getNextSkillCost(skill, rank) {
+  const steps = getSkillCostSteps(skill);
+  return rank < steps.length ? steps[rank] : undefined;
 }
 
 function renderSkillList() {
@@ -371,10 +434,16 @@ function renderSkillList() {
   skillList.replaceChildren(...skills.map((skill) => {
     const row = document.createElement('article');
     row.className = 'skill-row';
+    row.dataset.skillId = skill.id;
     const primary = document.createElement('div');
     primary.className = 'skill-primary';
     const name = document.createElement('h3');
     name.textContent = skill.name;
+    const description = document.createElement('p');
+    description.className = 'skill-offer-details';
+    description.textContent = `${skill.category} · ${skill.type}`;
+    primary.append(name, description);
+
     const characteristics = document.createElement('div');
     characteristics.className = 'skill-characteristics';
     skill.characteristics.forEach((id) => {
@@ -383,22 +452,148 @@ function renderSkillList() {
       chip.textContent = characteristicsById.get(id).name;
       characteristics.append(chip);
     });
-    primary.append(name, characteristics);
+    primary.append(characteristics);
 
-    const metadata = document.createElement('div');
-    metadata.className = 'skill-metadata';
-    const category = document.createElement('span');
-    category.className = 'skill-category';
-    category.textContent = skill.category;
-    const type = document.createElement('span');
-    type.className = 'skill-type';
-    type.textContent = skill.type;
-    metadata.append(category, type);
-    row.append(primary, metadata);
+    let specialInput = null;
+    if (skill.special) {
+      const specialLabel = document.createElement('label');
+      specialLabel.className = 'skill-special-label';
+      specialLabel.textContent = 'Spécialité';
+      specialInput = document.createElement('input');
+      specialInput.className = 'skill-special-input';
+      specialInput.type = 'text';
+      specialInput.placeholder = 'Ex. épée longue';
+      specialInput.value = skillSpecialValues.get(skill.id) || '';
+      specialLabel.append(specialInput);
+      primary.append(specialLabel);
+    }
+
+    const purchase = document.createElement('div');
+    purchase.className = 'skill-purchase';
+    const nextCostLabel = document.createElement('span');
+    nextCostLabel.className = 'next-rank-cost';
+    const buyButton = document.createElement('button');
+    buyButton.type = 'button';
+    buyButton.className = 'buy-rank-button';
+    buyButton.textContent = 'Acheter';
+    const updateOffer = () => {
+      const special = getSkillSpecial(skill, row);
+      const state = acquiredSkills.get(getSkillKey(skill.id, special));
+      const rank = state?.rank ?? 0;
+      const cost = getNextSkillCost(skill, rank);
+      const missingSpecial = Boolean(skill.special && !special);
+      const noCost = cost === undefined || cost === null;
+      const notEnough = typeof cost === 'number' && baseDevelopmentPoints !== null && cost > baseDevelopmentPoints - getTotalSkillSpend();
+      row.draggable = !missingSpecial && !noCost && !notEnough && baseDevelopmentPoints !== null;
+      buyButton.disabled = !row.draggable;
+      if (missingSpecial) nextCostLabel.textContent = 'Précisez une spécialité';
+      else if (baseDevelopmentPoints === null) nextCostLabel.textContent = 'Budget en attente';
+      else if (noCost) nextCostLabel.textContent = 'Rang suivant indisponible';
+      else if (notEnough) nextCostLabel.textContent = `Il manque ${cost - (baseDevelopmentPoints - getTotalSkillSpend())} PD`;
+      else nextCostLabel.textContent = `Prochain rang · ${cost} PD`;
+    };
+    if (specialInput) {
+      specialInput.addEventListener('input', () => {
+        skillSpecialValues.set(skill.id, specialInput.value);
+        updateOffer();
+      });
+    }
+    buyButton.addEventListener('click', () => purchaseSkill(skill.id, getSkillSpecial(skill, row)));
+    purchase.append(nextCostLabel, buyButton);
+    row.append(primary, purchase);
+    row.addEventListener('dragstart', (event) => {
+      if (event.target.closest('input, button') || !row.draggable) {
+        event.preventDefault();
+        return;
+      }
+      const special = getSkillSpecial(skill, row);
+      event.dataTransfer.setData('text/plain', JSON.stringify({ skillId: skill.id, special }));
+      event.dataTransfer.effectAllowed = 'copy';
+      row.classList.add('is-dragging');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('is-dragging'));
+    updateOffer();
     return row;
   }));
   const count = skills.length;
   document.querySelector('#skills-count').textContent = `${count} compétence${count > 1 ? 's' : ''}`;
+}
+
+function purchaseSkill(skillId, special = '') {
+  const skill = skills.find((entry) => entry.id === skillId);
+  if (!skill) return;
+  const normalizedSpecial = special.trim();
+  if (skill.special && !normalizedSpecial) {
+    document.querySelector('#skill-purchase-status').textContent = 'Précisez la spécialité avant d’acheter cette compétence.';
+    return;
+  }
+
+  const key = getSkillKey(skillId, normalizedSpecial);
+  const state = acquiredSkills.get(key) || { skillId, special: normalizedSpecial, rank: 0, spent: 0 };
+  const cost = getNextSkillCost(skill, state.rank);
+  const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
+  if (cost === undefined || cost === null) {
+    document.querySelector('#skill-purchase-status').textContent = 'Aucun coût supplémentaire n’est défini pour ce rang.';
+    return;
+  }
+  if (baseDevelopmentPoints === null || cost > remaining) {
+    document.querySelector('#skill-purchase-status').textContent = `Points de Développement insuffisants : ${cost} PD sont nécessaires.`;
+    return;
+  }
+
+  state.rank += 1;
+  state.spent += cost;
+  acquiredSkills.set(key, state);
+  document.querySelector('#skill-purchase-status').textContent = `${skill.name}${normalizedSpecial ? ` (${normalizedSpecial})` : ''} atteint le rang ${state.rank} pour ${cost} PD.`;
+  renderDevelopmentPoints();
+}
+
+function renderAcquiredSkills() {
+  const acquiredList = document.querySelector('#acquired-skill-list');
+  acquiredList.replaceChildren();
+  let totalRanks = 0;
+  for (const [key, state] of acquiredSkills.entries()) {
+    const skill = skills.find((entry) => entry.id === state.skillId);
+    if (!skill) continue;
+    totalRanks += state.rank;
+    const row = document.createElement('article');
+    row.className = 'acquired-skill-row';
+    const details = document.createElement('div');
+    details.className = 'acquired-skill-details';
+    const name = document.createElement('h3');
+    name.textContent = skill.name;
+    const subtitle = document.createElement('p');
+    subtitle.textContent = state.special ? `${state.special} · ${skill.category}` : skill.category;
+    details.append(name, subtitle);
+
+    const rankInfo = document.createElement('div');
+    rankInfo.className = 'acquired-rank-info';
+    const rank = document.createElement('strong');
+    rank.textContent = `Rang ${state.rank}`;
+    const spent = document.createElement('span');
+    spent.textContent = `${state.spent} PD`;
+    rankInfo.append(rank, spent);
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'remove-rank-button';
+    removeButton.textContent = '−';
+    removeButton.title = 'Retirer le dernier rang et récupérer ses points';
+    removeButton.setAttribute('aria-label', `Retirer le dernier rang de ${skill.name}`);
+    removeButton.addEventListener('click', () => {
+      const steps = getSkillCostSteps(skill);
+      const refund = steps[state.rank - 1];
+      if (typeof refund !== 'number') return;
+      state.rank -= 1;
+      state.spent -= refund;
+      if (state.rank === 0) acquiredSkills.delete(key);
+      document.querySelector('#skill-purchase-status').textContent = `Dernier rang retiré de ${skill.name}. ${refund} PD récupérés.`;
+      renderDevelopmentPoints();
+    });
+    row.append(details, rankInfo, removeButton);
+    acquiredList.append(row);
+  }
+  document.querySelector('#acquired-count').textContent = `${totalRanks} rang${totalRanks === 1 ? '' : 's'}`;
 }
 
 async function loadRulesData() {
@@ -479,7 +674,32 @@ professionStep.addEventListener('click', () => showView('creation'));
 characteristicsStep.addEventListener('click', () => showView('characteristics'));
 skillsStep.addEventListener('click', () => showView('skills'));
 
+const acquiredSkillList = document.querySelector('#acquired-skill-list');
+acquiredSkillList.addEventListener('dragover', (event) => {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'copy';
+  acquiredSkillList.classList.add('is-drop-target');
+});
+acquiredSkillList.addEventListener('dragleave', (event) => {
+  if (!acquiredSkillList.contains(event.relatedTarget)) acquiredSkillList.classList.remove('is-drop-target');
+});
+acquiredSkillList.addEventListener('drop', (event) => {
+  event.preventDefault();
+  acquiredSkillList.classList.remove('is-drop-target');
+  try {
+    const { skillId, special } = JSON.parse(event.dataTransfer.getData('text/plain'));
+    purchaseSkill(skillId, special);
+  } catch (error) {
+    document.querySelector('#skill-purchase-status').textContent = 'Cette compétence ne peut pas être achetée.';
+  }
+});
+
 professionSelect.addEventListener('change', () => {
+  if (selectedProfessionId && selectedProfessionId !== professionSelect.value) {
+    acquiredSkills.clear();
+    document.querySelector('#skill-purchase-status').textContent = 'Les compétences acquises ont été retirées car la profession a changé.';
+  }
+  selectedProfessionId = professionSelect.value;
   renderProfession(professionsById.get(professionSelect.value));
   updateStepAvailability();
 });

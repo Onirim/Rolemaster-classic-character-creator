@@ -231,24 +231,38 @@
             <div class="development-icon" aria-hidden="true">✦</div>
             <div class="development-copy">
               <p class="section-kicker">BUDGET DU PERSONNAGE</p>
-              <h2 id="development-title">Points de Développement disponibles</h2>
-              <p>Somme des points accordés par les caractéristiques dont le développement est activé.</p>
+              <h2 id="development-title">Points de Développement restants</h2>
+              <p id="development-breakdown">Budget initial : <span id="development-points-base">—</span> PD · dépensés : <span id="development-points-spent">0</span> PD</p>
             </div>
             <strong class="development-total" id="development-points-total">—</strong>
             <span class="development-unit">PD</span>
           </section>
 
-          <section class="skills-list-section" aria-labelledby="skills-list-title">
-            <div class="skills-list-heading">
-              <div>
-                <p class="section-kicker">CATÉGORIE PRINCIPALE</p>
-                <h2 id="skills-list-title">Compétences disponibles</h2>
+          <div class="skill-purchase-layout">
+            <section class="skills-list-section" aria-labelledby="skills-list-title">
+              <div class="skills-list-heading">
+                <div>
+                  <p class="section-kicker">À ACQUÉRIR</p>
+                  <h2 id="skills-list-title">Compétences disponibles</h2>
+                </div>
+                <span class="progress-count" id="skills-count">0 compétence</span>
               </div>
-              <span class="progress-count" id="skills-count">0 compétence</span>
-            </div>
-            <div class="skill-list" id="skill-list"></div>
-            <p class="data-error" id="skills-error" role="alert" hidden>Impossible de charger les compétences.</p>
-          </section>
+              <div class="skill-list" id="skill-list"></div>
+            </section>
+
+            <section class="skills-list-section acquired-section" aria-labelledby="acquired-list-title">
+              <div class="skills-list-heading">
+                <div>
+                  <p class="section-kicker">VOTRE PERSONNAGE</p>
+                  <h2 id="acquired-list-title">Compétences acquises</h2>
+                </div>
+                <span class="progress-count" id="acquired-count">0 rang</span>
+              </div>
+              <div class="acquired-skill-list" id="acquired-skill-list" aria-label="Compétences achetées"></div>
+            </section>
+          </div>
+          <p class="skill-purchase-status" id="skill-purchase-status" role="status" aria-live="polite">Glissez une compétence vers la droite pour acheter un rang. Chaque rang suivant suit le coût indiqué pour la profession.</p>
+          <p class="data-error" id="skills-error" role="alert" hidden>Impossible de charger les compétences.</p>
 
           <div class="creation-actions">
             <button class="back-button" id="back-characteristics" type="button"><span aria-hidden="true">←</span> Retour aux caractéristiques</button>

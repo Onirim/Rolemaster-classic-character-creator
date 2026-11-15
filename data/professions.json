@@ -6,7 +6,32 @@
       "name": "Guerrier",
       "description": "Spécialiste des armes, le Guerrier maîtrise aisément une grande variété d’armes et peut porter les armures les plus lourdes. Il est moins à l’aise dans les manœuvres délicates et la magie.",
       "realm": "Royaume des Armes",
-      "primeRequisites": ["CO", "FO"]
+      "primeRequisites": ["CO", "FO"],
+      "skillCost": [
+        { "name": "Cuir souple", "costs": ["1/*"] },
+        { "name": "Cuir rigide", "costs": ["1/*"] },
+        { "name": "Cotte de mailles", "costs": ["2/*"] },
+        { "name": "Plates", "costs": ["2/*"] },
+        { "name": "Catégories d'armes", "costs": ["1/5", "2/5", "2/7", "2/7", "2/7", "5"] },
+        { "name": "Escalade", "skillId": "escalade", "costs": ["3/7"] },
+        { "name": "Natation", "costs": ["2/6"] },
+        { "name": "Équitation", "costs": ["2/6"] },
+        { "name": "Désarmement de pièges", "costs": ["3/8"] },
+        { "name": "Crochetage", "costs": ["3/9"] },
+        { "name": "Filature & dissimulation", "costs": ["2/5"] },
+        { "name": "Perception", "costs": ["2/5"] },
+        { "name": "Listes de sort", "costs": ["20"] },
+        { "name": "Runes", "costs": ["7"] },
+        { "name": "Concordance", "costs": ["9"] },
+        { "name": "Transmission", "costs": ["25"] },
+        { "name": "Direction de sort", "costs": ["20"] },
+        { "name": "Embuscade", "costs": ["3/8"] },
+        { "name": "Linguistique", "costs": ["3/*"] },
+        { "name": "Mouvements adrénaux", "costs": ["2/6"] },
+        { "name": "Défense adrénale", "costs": ["20"] },
+        { "name": "Arts martiaux", "costs": ["20"] },
+        { "name": "Développement corporel", "costs": ["1/3"] }
+      ]
     }
   ]
 }
