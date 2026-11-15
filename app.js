@@ -19,6 +19,7 @@ let characteristicsInOrder = [];
 const rolls = Array(10).fill(null);
 const rollAssignments = new Map();
 let selectedRollIndex = null;
+let potentialTable = null;
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -63,6 +64,7 @@ function showView(view) {
   homeStep.toggleAttribute('aria-current', isHome);
   professionStep.toggleAttribute('aria-current', isCreation);
   characteristicsStep.toggleAttribute('aria-current', isCharacteristics);
+  document.querySelector('.nav-progress span').style.width = isHome ? '0%' : isCreation ? '50%' : '100%';
 
   if (isHome) {
     window.location.hash = 'accueil';
@@ -130,12 +132,18 @@ function createRollCards() {
     card.className = 'roll-card';
     card.dataset.rollIndex = String(index);
     card.setAttribute('aria-label', `Tirage ${index + 1} : cliquer pour lancer les dés`);
-    card.innerHTML = `<span class="roll-index">${String(index + 1).padStart(2, '0')}</span><span class="roll-value">?</span><span class="roll-invitation">Lancer</span><span class="roll-assignment"></span>`;
+    card.innerHTML = `<span class="roll-index">${String(index + 1).padStart(2, '0')}</span><span class="roll-invitation">Lancer</span><span class="roll-values" hidden><span class="roll-metric roll-temporary"><span>Temp.</span><strong class="temporary-value"></strong></span><span class="roll-metric roll-potential"><span>Jet pot.</span><strong class="potential-roll-value"></strong></span><span class="roll-metric roll-potential-result"><span>Pot.</span><strong class="potential-stat-value"></strong></span></span><span class="roll-assignment"></span>`;
     card.addEventListener('click', () => {
       if (rolls[index] === null) {
-        rolls[index] = 20 + Math.floor(Math.random() * 81);
+        const temporary = 20 + Math.floor(Math.random() * 81);
+        const potentialRoll = 1 + Math.floor(Math.random() * 100);
+        rolls[index] = {
+          temporary,
+          potentialRoll,
+          potentialValue: getPotentialValue(temporary, potentialRoll)
+        };
         selectedRollIndex = index;
-        setAllocationStatus(`Tirage ${index + 1} : ${rolls[index]}. Glissez-le sur une caractéristique ou sélectionnez une case.`);
+        setAllocationStatus(`Tirage ${index + 1} lancé : temporaire ${temporary}, jet de potentiel ${potentialRoll}, potentielle ${rolls[index].potentialValue ?? '—'}.`);
       } else {
         selectedRollIndex = selectedRollIndex === index ? null : index;
         setAllocationStatus(selectedRollIndex === null
@@ -158,6 +166,12 @@ function createRollCards() {
     card.addEventListener('dragend', () => card.classList.remove('is-dragging'));
     return card;
   }));
+}
+
+function getPotentialValue(temporary, potentialRoll) {
+  const statRangeIndex = potentialTable.initialStatRanges.findIndex((range) => temporary >= range.min && temporary <= range.max);
+  const rollRange = potentialTable.potentialRollRanges.find((range) => potentialRoll >= range.min && potentialRoll <= range.max);
+  return statRangeIndex < 0 || !rollRange ? null : rollRange.values[statRangeIndex];
 }
 
 function createCharacteristicCards(characteristics) {
@@ -224,24 +238,29 @@ function renderAllocation() {
   const assignedByRoll = new Map([...rollAssignments.entries()].map(([characteristicId, rollIndex]) => [rollIndex, characteristicId]));
   document.querySelectorAll('.roll-card').forEach((card) => {
     const index = Number(card.dataset.rollIndex);
-    const value = rolls[index];
+    const result = rolls[index];
     const assignment = assignedByRoll.get(index);
-    card.draggable = value !== null;
-    card.classList.toggle('is-rolled', value !== null);
+    card.draggable = result !== null;
+    card.classList.toggle('is-rolled', result !== null);
     card.classList.toggle('is-selected', selectedRollIndex === index);
     card.classList.toggle('is-assigned', Boolean(assignment));
-    card.querySelector('.roll-value').textContent = value === null ? '?' : String(value);
-    card.querySelector('.roll-invitation').textContent = value === null ? 'Lancer' : 'Jet';
+    card.querySelector('.roll-invitation').hidden = result !== null;
+    card.querySelector('.roll-values').hidden = result === null;
+    if (result !== null) {
+      card.querySelector('.temporary-value').textContent = String(result.temporary);
+      card.querySelector('.potential-roll-value').textContent = String(result.potentialRoll);
+      card.querySelector('.potential-stat-value').textContent = result.potentialValue ?? '—';
+    }
     card.querySelector('.roll-assignment').textContent = assignment ? characteristicsById.get(assignment).id : '';
-    card.setAttribute('aria-label', value === null
+    card.setAttribute('aria-label', result === null
       ? `Tirage ${index + 1} : cliquer pour lancer les dés`
-      : `Tirage ${index + 1} : ${value}${assignment ? `, attribué à ${characteristicsById.get(assignment).name}` : ', non attribué'}`);
+      : `Tirage ${index + 1} : temporaire ${result.temporary}, jet de potentiel ${result.potentialRoll}, potentielle ${result.potentialValue ?? 'aucune'}.${assignment ? ` Attribué à ${characteristicsById.get(assignment).name}.` : ''}`);
   });
 
   document.querySelectorAll('.characteristic-card').forEach((card) => {
     const characteristicId = card.dataset.characteristicId;
     const rollIndex = rollAssignments.get(characteristicId);
-    const value = rollIndex === undefined ? null : rolls[rollIndex];
+    const value = rollIndex === undefined ? null : rolls[rollIndex]?.temporary;
     card.classList.toggle('has-value', value !== null);
     card.classList.toggle('is-drop-target', false);
     card.querySelector('.characteristic-assigned').textContent = value === null ? 'Déposer' : String(value);
@@ -255,20 +274,24 @@ function renderAllocation() {
 
 async function loadRulesData() {
   try {
-    const [professionsResponse, characteristicsResponse, racesResponse] = await Promise.all([
+    const [professionsResponse, characteristicsResponse, racesResponse, potentialResponse] = await Promise.all([
       fetch('./data/professions.json'),
       fetch('./data/caractéristiques.json'),
-      fetch('./data/races.json')
+      fetch('./data/races.json'),
+      fetch('./data/potential-table.json')
     ]);
-    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok) throw new Error('Fichiers de configuration indisponibles');
-    const [professionData, characteristicData, raceData] = await Promise.all([
+    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok || !potentialResponse.ok) throw new Error('Fichiers de configuration indisponibles');
+    const [professionData, characteristicData, raceData, potentialData] = await Promise.all([
       professionsResponse.json(),
       characteristicsResponse.json(),
-      racesResponse.json()
+      racesResponse.json(),
+      potentialResponse.json()
     ]);
     if (!Array.isArray(professionData.professions) || professionData.professions.length === 0) throw new Error('Aucune profession configurée');
     if (!Array.isArray(characteristicData.characteristics)) throw new Error('Liste de caractéristiques invalide');
     if (!Array.isArray(raceData.races) || raceData.races.length === 0) throw new Error('Aucune race configurée');
+    if (!Array.isArray(potentialData.initialStatRanges) || !Array.isArray(potentialData.potentialRollRanges)) throw new Error('Table des potentiels invalide');
+    potentialTable = potentialData;
 
     characteristicData.characteristics.forEach((characteristic) => {
       characteristicsById.set(characteristic.id, characteristic);
