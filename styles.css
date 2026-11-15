@@ -177,15 +177,14 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .roll-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .roll-card { min-width: 0; min-height: 112px; padding: 9px 5px 7px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; border: 1px dashed #4a5b51; border-radius: 6px; background: #141d19; color: #bdc9c2; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .15s ease, box-shadow .15s ease; }
 .roll-card:hover { border-color: #b2945c; background: #1d2923; transform: translateY(-1px); }
-.roll-index { position: absolute; top: 7px; left: 8px; color: #9caaa1; font: 700 8px 'Manrope', sans-serif; letter-spacing: .08em; }
-.roll-invitation { color: #becbc2; font-size: 8px; font-weight: 600; }
+.roll-invitation { color: #becbc2; font-size: 9px; font-weight: 600; }
 .roll-values { width: 100%; margin-top: 10px; display: grid; gap: 3px; }
 .roll-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 3px; color: #c5d0c9; font-size: 7px; line-height: 1.25; text-align: left; }
-.roll-metric strong { color: #e7eee9; font: 700 12px/1 'Manrope', sans-serif; }
+.roll-metric strong { color: #e7eee9; font: 700 17px/1 'Manrope', sans-serif; }
 .roll-potential { color: #89968e; }
-.roll-potential strong { color: #909d95; }
+.roll-potential strong { color: #909d95; font-size: 10px; }
 .roll-potential-result { color: #d4c08d; }
-.roll-potential-result strong { color: #ebd18b; font-size: 14px; }
+.roll-potential-result strong { color: #ebd18b; font-size: 17px; }
 .roll-card.is-rolled { border-style: solid; border-color: #52655a; background: #202d26; cursor: grab; }
 .roll-card.is-rolled:active { cursor: grabbing; }
 .roll-card.is-selected { border-color: #d0ad6c; box-shadow: 0 0 0 2px rgba(208,173,108,.2); }
@@ -193,14 +192,19 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .roll-card.is-dragging { opacity: .48; }
 .roll-assignment { position: absolute; top: 5px; right: 6px; min-width: 17px; padding: 2px 4px; border-radius: 3px; background: #354c3e; color: #d0e1d5; font: 700 7px 'Manrope', sans-serif; text-align: center; }
 .stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.characteristic-card { min-width: 0; min-height: 51px; padding: 7px 10px; display: grid; grid-template-columns: 29px minmax(0, 1fr) auto; align-items: center; gap: 8px; border: 1px solid #35443d; border-radius: 6px; background: #141d19; color: #d8e3dc; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+.characteristic-card { min-width: 0; min-height: 59px; padding: 8px 10px; display: grid; grid-template-columns: 29px minmax(0, 1fr); align-items: center; gap: 8px; border: 1px solid #35443d; border-radius: 6px; background: #141d19; color: #d8e3dc; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
 .characteristic-card:hover { border-color: #778d7d; background: #1d2923; }
 .characteristic-card.is-drop-target { border-color: #d0ad6c; background: #28372d; box-shadow: 0 0 0 2px rgba(208,173,108,.2); }
+.characteristic-card.is-prime-requisite { border-color: #b2945c; background: #26342a; box-shadow: inset 3px 0 0 #d0ad6c; }
+.characteristic-card.is-prime-requisite .characteristic-code { background: #ddc27d; color: #25352b; }
+.characteristic-card.is-prime-requisite .characteristic-name { color: #f1dfae; font-weight: 700; }
 .characteristic-code { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 4px; background: #2a3a31; color: #d4bb82; font: 700 9px 'Manrope', sans-serif; letter-spacing: .04em; }
 .characteristic-name { overflow: hidden; color: #d7e1da; font-size: 10px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.characteristic-assigned { min-width: 40px; color: #89988e; font: 600 14px 'Manrope', sans-serif; text-align: right; }
-.characteristic-card:not(.has-value) .characteristic-assigned { font-size: 8px; }
-.characteristic-card.has-value .characteristic-assigned { color: #e4c77f; font-size: 17px; }
+.characteristic-copy { min-width: 0; display: grid; gap: 4px; }
+.characteristic-assigned { display: flex; align-items: center; gap: 5px; color: #e4c77f; font: 700 15px/1 'Manrope', sans-serif; letter-spacing: .015em; }
+.characteristic-assigned .score-separator { color: #8d9a91; font-size: 10px; font-weight: 500; }
+.characteristic-assigned .characteristic-potential { color: #d7c99f; }
+.characteristic-card:not(.has-value) .characteristic-assigned { color: #87958d; font-size: 11px; font-weight: 500; }
 .allocation-status { min-height: 17px; margin: 13px 2px 0; color: #9eaaa3; font-size: 9px; }
 
 @media (min-width: 1441px) { .welcome { gap: 66px; } }
@@ -249,18 +253,18 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .roll-panel, .stat-panel { padding: 15px; }
   .roll-grid { gap: 5px; }
   .roll-card { min-height: 100px; padding-inline: 2px; }
-  .roll-index { top: 6px; left: 5px; font-size: 7px; }
-  .roll-invitation { font-size: 7px; }
-  .roll-values { margin-top: 11px; gap: 3px; }
+  .roll-invitation { font-size: 8px; }
+  .roll-values { margin-top: 8px; gap: 4px; }
   .roll-metric { gap: 1px; font-size: 6px; }
-  .roll-metric strong { font-size: 10px; }
-  .roll-potential-result strong { font-size: 12px; }
+  .roll-metric strong { font-size: 14px; }
+  .roll-potential strong { font-size: 8px; }
+  .roll-potential-result strong { font-size: 14px; }
   .roll-assignment { top: 4px; right: 4px; min-width: 15px; font-size: 6px; }
   .stat-grid { gap: 6px; }
-  .characteristic-card { grid-template-columns: 25px minmax(0, 1fr) auto; gap: 6px; padding-inline: 7px; }
+  .characteristic-card { grid-template-columns: 25px minmax(0, 1fr); gap: 6px; padding-inline: 7px; }
   .characteristic-code { width: 24px; height: 24px; font-size: 8px; }
   .characteristic-name { font-size: 9px; }
-  .characteristic-assigned { min-width: 33px; font-size: 12px; }
+  .characteristic-assigned { font-size: 12px; }
   .characteristics-panel-heading h2 { font-size: 17px; }
   .progress-count { padding: 5px 6px; font-size: 8px; }
   .art-caption { bottom: 12%; }
@@ -348,7 +352,6 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .panel-instruction { color: #78847f; }
 :root[data-theme="light"] .roll-card { border-color: #d9e1dc; background: #f8faf8; color: #46574e; }
 :root[data-theme="light"] .roll-card:hover { border-color: #bd9854; background: #f1f5f1; }
-:root[data-theme="light"] .roll-index { color: #87938e; }
 :root[data-theme="light"] .roll-invitation { color: #617168; }
 :root[data-theme="light"] .roll-metric { color: #53635c; }
 :root[data-theme="light"] .roll-metric strong { color: #294a40; }
@@ -363,8 +366,13 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .characteristic-card { border-color: #dfe6e1; background: #fff; color: #33463d; }
 :root[data-theme="light"] .characteristic-card:hover { border-color: #8ca294; background: #f5f8f5; }
 :root[data-theme="light"] .characteristic-card.is-drop-target { border-color: #bd9854; background: #f5f0e5; box-shadow: 0 0 0 2px rgba(189,152,84,.2); }
+:root[data-theme="light"] .characteristic-card.is-prime-requisite { border-color: #bd9854; background: #f6f1e5; box-shadow: inset 3px 0 0 #bd9854; }
+:root[data-theme="light"] .characteristic-card.is-prime-requisite .characteristic-code { background: #d9c28e; color: #294a40; }
+:root[data-theme="light"] .characteristic-card.is-prime-requisite .characteristic-name { color: #4c4026; }
 :root[data-theme="light"] .characteristic-code { background: #edf2ee; color: #8f713c; }
 :root[data-theme="light"] .characteristic-name { color: #33463d; }
-:root[data-theme="light"] .characteristic-assigned { color: #96a29b; }
-:root[data-theme="light"] .characteristic-card.has-value .characteristic-assigned { color: #82652f; }
+:root[data-theme="light"] .characteristic-assigned { color: #82652f; }
+:root[data-theme="light"] .characteristic-assigned .score-separator { color: #8f9b94; }
+:root[data-theme="light"] .characteristic-assigned .characteristic-potential { color: #82652f; }
+:root[data-theme="light"] .characteristic-card:not(.has-value) .characteristic-assigned { color: #9aa49f; }
 :root[data-theme="light"] .allocation-status { color: #78847f; }

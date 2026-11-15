@@ -14,6 +14,7 @@ const continueButton = document.querySelector('#continue-characteristics');
 const professionsById = new Map();
 const racesById = new Map();
 const characteristicsById = new Map();
+const mainCharacteristicIds = new Set();
 let selectedRace = null;
 let characteristicsInOrder = [];
 const rolls = Array(10).fill(null);
@@ -91,9 +92,12 @@ function updateStepAvailability() {
 
 function renderProfession(profession) {
   const hasProfession = Boolean(profession);
+  mainCharacteristicIds.clear();
+  profession?.primeRequisites.forEach((id) => mainCharacteristicIds.add(id));
   professionDetail.hidden = !hasProfession;
   emptyDetail.hidden = hasProfession;
   renderRacePresentation();
+  renderAllocation();
 
   if (!hasProfession) return;
 
@@ -132,7 +136,7 @@ function createRollCards() {
     card.className = 'roll-card';
     card.dataset.rollIndex = String(index);
     card.setAttribute('aria-label', `Tirage ${index + 1} : cliquer pour lancer les dés`);
-    card.innerHTML = `<span class="roll-index">${String(index + 1).padStart(2, '0')}</span><span class="roll-invitation">Lancer</span><span class="roll-values" hidden><span class="roll-metric roll-temporary"><span>Temp.</span><strong class="temporary-value"></strong></span><span class="roll-metric roll-potential"><span>Jet pot.</span><strong class="potential-roll-value"></strong></span><span class="roll-metric roll-potential-result"><span>Pot.</span><strong class="potential-stat-value"></strong></span></span><span class="roll-assignment"></span>`;
+    card.innerHTML = `<span class="roll-invitation">Lancer les dés</span><span class="roll-values" hidden><span class="roll-metric roll-temporary"><span>Temp.</span><strong class="temporary-value"></strong></span><span class="roll-metric roll-potential"><span>Jet pot.</span><strong class="potential-roll-value"></strong></span><span class="roll-metric roll-potential-result"><span>Pot.</span><strong class="potential-stat-value"></strong></span></span><span class="roll-assignment"></span>`;
     card.addEventListener('click', () => {
       if (rolls[index] === null) {
         const temporary = 20 + Math.floor(Math.random() * 81);
@@ -140,7 +144,7 @@ function createRollCards() {
         rolls[index] = {
           temporary,
           potentialRoll,
-          potentialValue: getPotentialValue(temporary, potentialRoll)
+          potentialValue: getPotentialValue(temporary, potentialRoll) ?? temporary
         };
         selectedRollIndex = index;
         setAllocationStatus(`Tirage ${index + 1} lancé : temporaire ${temporary}, jet de potentiel ${potentialRoll}, potentielle ${rolls[index].potentialValue ?? '—'}.`);
@@ -182,7 +186,7 @@ function createCharacteristicCards(characteristics) {
     card.className = 'characteristic-card';
     card.dataset.characteristicId = characteristic.id;
     card.setAttribute('aria-label', `${characteristic.name} : aucune valeur attribuée`);
-    card.innerHTML = `<span class="characteristic-code">${characteristic.id}</span><span class="characteristic-name"></span><span class="characteristic-assigned">Déposer</span>`;
+    card.innerHTML = `<span class="characteristic-code">${characteristic.id}</span><span class="characteristic-copy"><span class="characteristic-name"></span><span class="characteristic-assigned"><span class="characteristic-temporary">—</span><span class="score-separator">/</span><span class="characteristic-potential">—</span></span></span>`;
     card.querySelector('.characteristic-name').textContent = characteristic.name;
     card.addEventListener('click', () => {
       if (selectedRollIndex === null) return;
@@ -260,11 +264,13 @@ function renderAllocation() {
   document.querySelectorAll('.characteristic-card').forEach((card) => {
     const characteristicId = card.dataset.characteristicId;
     const rollIndex = rollAssignments.get(characteristicId);
-    const value = rollIndex === undefined ? null : rolls[rollIndex]?.temporary;
-    card.classList.toggle('has-value', value !== null);
+    const result = rollIndex === undefined ? null : rolls[rollIndex];
+    card.classList.toggle('has-value', result !== null);
     card.classList.toggle('is-drop-target', false);
-    card.querySelector('.characteristic-assigned').textContent = value === null ? 'Déposer' : String(value);
-    card.setAttribute('aria-label', `${characteristicsById.get(characteristicId).name} : ${value === null ? 'aucune valeur attribuée' : value}`);
+    card.classList.toggle('is-prime-requisite', mainCharacteristicIds.has(characteristicId));
+    card.querySelector('.characteristic-temporary').textContent = result === null ? '—' : String(result.temporary);
+    card.querySelector('.characteristic-potential').textContent = result === null ? '—' : String(result.potentialValue);
+    card.setAttribute('aria-label', `${characteristicsById.get(characteristicId).name}${mainCharacteristicIds.has(characteristicId) ? ', caractéristique principale' : ''} : ${result === null ? 'aucune valeur attribuée' : `temporaire ${result.temporary}, potentiel ${result.potentialValue}`}`);
   });
 
   const rolledCount = rolls.filter((value) => value !== null).length;
