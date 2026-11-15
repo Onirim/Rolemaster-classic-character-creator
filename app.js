@@ -3,10 +3,13 @@ const creationView = document.querySelector('#creation');
 const homeStep = document.querySelector('#home-step');
 const professionStep = document.querySelector('#profession-step');
 const professionSelect = document.querySelector('#profession-select');
+const raceSelect = document.querySelector('#race-select');
 const professionError = document.querySelector('#profession-error');
+const raceError = document.querySelector('#race-error');
 const professionDetail = document.querySelector('#profession-detail');
 const emptyDetail = document.querySelector('#empty-detail');
 const professionsById = new Map();
+const racesById = new Map();
 const characteristicsById = new Map();
 const themeSelect = document.querySelector('#theme-select');
 
@@ -73,19 +76,28 @@ function renderProfession(profession) {
   }));
 }
 
-async function loadProfessions() {
+function renderRace(race) {
+  document.querySelector('#race-description').textContent = race
+    ? race.description
+    : 'Sélectionnez une race pour découvrir ses origines.';
+}
+
+async function loadRulesData() {
   try {
-    const [professionsResponse, characteristicsResponse] = await Promise.all([
+    const [professionsResponse, characteristicsResponse, racesResponse] = await Promise.all([
       fetch('./data/professions.json'),
-      fetch('./data/caractéristiques.json')
+      fetch('./data/caractéristiques.json'),
+      fetch('./data/races.json')
     ]);
-    if (!professionsResponse.ok || !characteristicsResponse.ok) throw new Error('Fichiers de configuration indisponibles');
-    const [professionData, characteristicData] = await Promise.all([
+    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok) throw new Error('Fichiers de configuration indisponibles');
+    const [professionData, characteristicData, raceData] = await Promise.all([
       professionsResponse.json(),
-      characteristicsResponse.json()
+      characteristicsResponse.json(),
+      racesResponse.json()
     ]);
     if (!Array.isArray(professionData.professions) || professionData.professions.length === 0) throw new Error('Aucune profession configurée');
     if (!Array.isArray(characteristicData.characteristics)) throw new Error('Liste de caractéristiques invalide');
+    if (!Array.isArray(raceData.races) || raceData.races.length === 0) throw new Error('Aucune race configurée');
 
     characteristicData.characteristics.forEach((characteristic) => {
       characteristicsById.set(characteristic.id, characteristic);
@@ -98,10 +110,21 @@ async function loadProfessions() {
       professionsById.set(profession.id, profession);
       professionSelect.add(new Option(profession.name, profession.id));
     });
+
+    raceSelect.replaceChildren(new Option('Sélectionnez une race', ''));
+    raceData.races.forEach((race) => {
+      const missingModifiers = Object.keys(race.characteristicModifiers).filter((id) => !characteristicsById.has(id));
+      if (missingModifiers.length > 0) throw new Error(`Caractéristiques inconnues pour ${race.name} : ${missingModifiers.join(', ')}`);
+      racesById.set(race.id, race);
+      raceSelect.add(new Option(race.name, race.id));
+    });
     professionSelect.disabled = false;
+    raceSelect.disabled = false;
   } catch (error) {
     professionSelect.replaceChildren(new Option('Professions indisponibles', ''));
     professionError.hidden = false;
+    raceSelect.replaceChildren(new Option('Races indisponibles', ''));
+    raceError.hidden = false;
   }
 }
 
@@ -113,5 +136,8 @@ professionStep.addEventListener('click', () => showView('creation'));
 professionSelect.addEventListener('change', () => {
   renderProfession(professionsById.get(professionSelect.value));
 });
+raceSelect.addEventListener('change', () => {
+  renderRace(racesById.get(raceSelect.value));
+});
 
-loadProfessions();
+loadRulesData();

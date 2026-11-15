@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "races": [
+    {
+      "id": "humain",
+      "name": "Homme Commun",
+      "description": "Présents dans de nombreuses régions, les Hommes Communs s’adaptent à des coutumes et des milieux très variés. La diversité de leurs origines les conduit à suivre des voies multiples, au gré de leurs choix et des circonstances.",
+      "characteristicModifiers": {
+        "FO": 5,
+        "AD": 5
+      },
+      "resistanceRollModifiers": {},
+      "soulDepartureRounds": 12,
+      "characteristicDeterioration": 0,
+      "recoveryMultiplier": 1,
+      "startingLanguages": 2,
+      "hitPointsDie": "d8",
+      "maxHitPoints": 120,
+      "backgroundOptions": 6
+    }
+  ]
+}

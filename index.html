@@ -128,12 +128,16 @@
               <p class="field-hint" id="profession-hint">La profession détermine les domaines où votre personnage progresse le plus facilement.</p>
               <p class="data-error" id="profession-error" role="alert" hidden>Impossible de charger les professions.</p>
 
-              <div class="race-placeholder">
-                <span class="placeholder-icon" aria-hidden="true">
-                  <svg viewBox="0 0 20 20" fill="none"><path d="M6 8V6.5a4 4 0 0 1 8 0V8m-9 0h10v8H5V8Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </span>
-                <span><strong>Choix de la race</strong><small>Cette partie sera ajoutée prochainement.</small></span>
-                <span class="coming-soon">À VENIR</span>
+              <div class="race-selection">
+                <label class="select-label" for="race-select">Race</label>
+                <div class="select-wrap">
+                  <select id="race-select" name="race" aria-describedby="race-description" disabled>
+                    <option value="">Chargement des races…</option>
+                  </select>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
+                </div>
+                <p class="race-description" id="race-description" aria-live="polite">Sélectionnez une race pour découvrir ses origines.</p>
+                <p class="data-error" id="race-error" role="alert" hidden>Impossible de charger les races.</p>
               </div>
             </section>
 

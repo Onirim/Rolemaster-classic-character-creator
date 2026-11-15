@@ -131,6 +131,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .race-placeholder strong { color: #c0ccc5; font-size: 11px; }
 .race-placeholder small { color: #a4b0a9; font-size: 9px; }
 .coming-soon { padding: 5px 7px; border: 1px solid #3b4942; border-radius: 3px; color: #aab5af; font-size: 7px; font-weight: 700; letter-spacing: .1em; }
+.race-selection { margin-top: 25px; padding-top: 19px; border-top: 1px solid #344139; }
+.race-description { margin: 10px 0 0; color: #a4b0a9; font-size: 10px; line-height: 1.65; }
 .profession-detail { padding: 25px 28px 20px; background: #19231f; }
 .detail-topline { display: flex; align-items: center; gap: 8px; color: #a4b1a9; font-size: 8px; font-weight: 700; letter-spacing: .16em; }
 .detail-emblem { color: var(--gold); font-size: 17px; }
@@ -256,6 +258,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .race-placeholder strong { color: #65746d; }
 :root[data-theme="light"] .race-placeholder small { color: #9aa49f; }
 :root[data-theme="light"] .coming-soon { border-color: #e5e9e6; color: #a0aaa5; }
+:root[data-theme="light"] .race-selection { border-top-color: #e9eeeb; }
+:root[data-theme="light"] .race-description { color: #8b9791; }
 :root[data-theme="light"] .profession-detail { background: #fdfefd; }
 :root[data-theme="light"] .detail-topline { color: #8d9b93; }
 :root[data-theme="light"] .detail-description { color: #77847e; }
