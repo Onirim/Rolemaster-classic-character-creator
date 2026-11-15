@@ -4,21 +4,58 @@
     {
       "id": "armes-tranchantes-1-main",
       "name": "Armes tranchantes 1 main",
-      "characteristics": ["FO", "AG"],
+      "characteristics": ["FO/FO/AG"],
       "category": "Armes",
       "type": "Principale",
-      "special": "categorie-arme",
-      "costReference": {
-        "categoryName": "Catégories d'armes",
-        "index": 0
-      }
+      "special": "categorie-arme"
+    },
+	{
+      "id": "armes-contondantes-1-main",
+      "name": "Armes contondantes 1 main",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Armes",
+      "type": "Principale",
+      "special": "categorie-arme"
+    },
+	{
+      "id": "armes-2-mains",
+      "name": "Armes à deux mains",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Armes",
+      "type": "Principale",
+      "special": "categorie-arme"
+    },
+	{
+      "id": "armes-de-trait",
+      "name": "Armes de trait",
+      "characteristics": ["AG/AG/FO"],
+      "category": "Armes",
+      "type": "Principale",
+      "special": "categorie-arme"
+    },
+	{
+      "id": "armes-de-jet",
+      "name": "Armes de jet",
+      "characteristics": ["AG/FO"],
+      "category": "Armes",
+      "type": "Principale",
+      "special": "categorie-arme"
+    },
+	{
+      "id": "armes-de-hast",
+      "name": "Armes d'hast",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Armes",
+      "type": "Principale",
+      "special": "categorie-arme"
     },
     {
       "id": "escalade",
       "name": "Escalade",
       "characteristics": ["AG"],
       "category": "Extérieur",
-      "type": "Principale"
+      "type": "Principale",
+	  "special" : "none"
     }
   ]
 }

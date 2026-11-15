@@ -396,18 +396,39 @@ function getTotalSkillSpend() {
   return [...acquiredSkills.values()].reduce((sum, entry) => sum + entry.spent, 0);
 }
 
-function getSkillCostSteps(skill) {
-  const profession = professionsById.get(professionSelect.value);
-  if (!profession || !Array.isArray(profession.skillCost)) return [];
+function isWeaponCategorySkill(skill) {
+  return skill.special === 'categorie-arme';
+}
 
-  let rawCost;
-  if (skill.costReference) {
-    const categoryEntry = profession.skillCost.find((entry) => entry.name === skill.costReference.categoryName);
-    rawCost = categoryEntry?.costs?.[skill.costReference.index];
-  } else {
-    const skillEntry = profession.skillCost.find((entry) => entry.skillId === skill.id);
-    rawCost = skillEntry?.costs?.[0];
-  }
+function needsCustomSkillSpecial(skill) {
+  return skill.special !== null && typeof skill.special === 'object' && skill.special.required === true;
+}
+
+function getSkillCostEntry(skill) {
+  const profession = professionsById.get(professionSelect.value);
+  if (!profession || !Array.isArray(profession.skillCost)) return null;
+  return profession.skillCost.find((entry) => entry.skillId === skill.id || entry.name === skill.id) || null;
+}
+
+function getWeaponCategoryCostEntry() {
+  const profession = professionsById.get(professionSelect.value);
+  return profession?.skillCost?.find((entry) => entry.name === 'categorie-armes') || null;
+}
+
+function getAvailableWeaponCostIndex() {
+  const entry = getWeaponCategoryCostEntry();
+  if (!entry || !Array.isArray(entry.costs)) return undefined;
+  const usedIndexes = new Set([...acquiredSkills.values()]
+    .filter((state) => state.categoryCostIndex !== undefined)
+    .map((state) => state.categoryCostIndex));
+  const availableIndex = entry.costs.findIndex((_, index) => !usedIndexes.has(index));
+  return availableIndex < 0 ? undefined : availableIndex;
+}
+
+function getSkillCostSteps(skill, categoryCostIndex) {
+  const rawCost = isWeaponCategorySkill(skill)
+    ? getWeaponCategoryCostEntry()?.costs?.[categoryCostIndex]
+    : getSkillCostEntry(skill)?.costs?.[0];
   if (rawCost === undefined) return [];
   return String(rawCost).split('/').map((part) => {
     const cost = Number(part);
@@ -420,13 +441,20 @@ function getSkillKey(skillId, special = '') {
 }
 
 function getSkillSpecial(skill, row = null) {
-  if (!skill.special) return '';
+  if (!needsCustomSkillSpecial(skill)) return '';
   return row?.querySelector('.skill-special-input')?.value.trim() ?? skillSpecialValues.get(skill.id) ?? '';
 }
 
-function getNextSkillCost(skill, rank) {
-  const steps = getSkillCostSteps(skill);
-  return rank < steps.length ? steps[rank] : undefined;
+function getNextSkillCost(skill, rank, key) {
+  const state = acquiredSkills.get(key);
+  const categoryCostIndex = isWeaponCategorySkill(skill)
+    ? state?.categoryCostIndex ?? getAvailableWeaponCostIndex()
+    : undefined;
+  const steps = getSkillCostSteps(skill, categoryCostIndex);
+  return {
+    cost: rank < steps.length ? steps[rank] : undefined,
+    categoryCostIndex
+  };
 }
 
 function renderSkillList() {
@@ -446,16 +474,16 @@ function renderSkillList() {
 
     const characteristics = document.createElement('div');
     characteristics.className = 'skill-characteristics';
-    skill.characteristics.forEach((id) => {
+    skill.characteristics.forEach((reference) => {
       const chip = document.createElement('span');
       chip.className = 'skill-characteristic-chip';
-      chip.textContent = characteristicsById.get(id).name;
+      chip.textContent = reference.split('/').map((id) => characteristicsById.get(id.trim()).name).join(' / ');
       characteristics.append(chip);
     });
     primary.append(characteristics);
 
     let specialInput = null;
-    if (skill.special) {
+    if (needsCustomSkillSpecial(skill)) {
       const specialLabel = document.createElement('label');
       specialLabel.className = 'skill-special-label';
       specialLabel.textContent = 'Spécialité';
@@ -480,8 +508,9 @@ function renderSkillList() {
       const special = getSkillSpecial(skill, row);
       const state = acquiredSkills.get(getSkillKey(skill.id, special));
       const rank = state?.rank ?? 0;
-      const cost = getNextSkillCost(skill, rank);
-      const missingSpecial = Boolean(skill.special && !special);
+      const costInfo = getNextSkillCost(skill, rank, getSkillKey(skill.id, special));
+      const cost = costInfo.cost;
+      const missingSpecial = Boolean(needsCustomSkillSpecial(skill) && !special);
       const noCost = cost === undefined || cost === null;
       const notEnough = typeof cost === 'number' && baseDevelopmentPoints !== null && cost > baseDevelopmentPoints - getTotalSkillSpend();
       row.draggable = !missingSpecial && !noCost && !notEnough && baseDevelopmentPoints !== null;
@@ -490,7 +519,7 @@ function renderSkillList() {
       else if (baseDevelopmentPoints === null) nextCostLabel.textContent = 'Budget en attente';
       else if (noCost) nextCostLabel.textContent = 'Rang suivant indisponible';
       else if (notEnough) nextCostLabel.textContent = `Il manque ${cost - (baseDevelopmentPoints - getTotalSkillSpend())} PD`;
-      else nextCostLabel.textContent = `Prochain rang · ${cost} PD`;
+      else nextCostLabel.textContent = `Prochain rang · ${cost} PD${isWeaponCategorySkill(skill) ? ` · tarif ${costInfo.categoryCostIndex + 1}/6` : ''}`;
     };
     if (specialInput) {
       specialInput.addEventListener('input', () => {
@@ -523,14 +552,15 @@ function purchaseSkill(skillId, special = '') {
   const skill = skills.find((entry) => entry.id === skillId);
   if (!skill) return;
   const normalizedSpecial = special.trim();
-  if (skill.special && !normalizedSpecial) {
+  if (needsCustomSkillSpecial(skill) && !normalizedSpecial) {
     document.querySelector('#skill-purchase-status').textContent = 'Précisez la spécialité avant d’acheter cette compétence.';
     return;
   }
 
   const key = getSkillKey(skillId, normalizedSpecial);
   const state = acquiredSkills.get(key) || { skillId, special: normalizedSpecial, rank: 0, spent: 0 };
-  const cost = getNextSkillCost(skill, state.rank);
+  const costInfo = getNextSkillCost(skill, state.rank, key);
+  const cost = costInfo.cost;
   const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
   if (cost === undefined || cost === null) {
     document.querySelector('#skill-purchase-status').textContent = 'Aucun coût supplémentaire n’est défini pour ce rang.';
@@ -543,6 +573,9 @@ function purchaseSkill(skillId, special = '') {
 
   state.rank += 1;
   state.spent += cost;
+  if (isWeaponCategorySkill(skill) && state.categoryCostIndex === undefined) {
+    state.categoryCostIndex = costInfo.categoryCostIndex;
+  }
   acquiredSkills.set(key, state);
   document.querySelector('#skill-purchase-status').textContent = `${skill.name}${normalizedSpecial ? ` (${normalizedSpecial})` : ''} atteint le rang ${state.rank} pour ${cost} PD.`;
   renderDevelopmentPoints();
@@ -563,7 +596,9 @@ function renderAcquiredSkills() {
     const name = document.createElement('h3');
     name.textContent = skill.name;
     const subtitle = document.createElement('p');
-    subtitle.textContent = state.special ? `${state.special} · ${skill.category}` : skill.category;
+    subtitle.textContent = isWeaponCategorySkill(skill)
+      ? `${skill.category} · tarif ${state.categoryCostIndex + 1}/6`
+      : state.special ? `${state.special} · ${skill.category}` : skill.category;
     details.append(name, subtitle);
 
     const rankInfo = document.createElement('div');
@@ -581,7 +616,7 @@ function renderAcquiredSkills() {
     removeButton.title = 'Retirer le dernier rang et récupérer ses points';
     removeButton.setAttribute('aria-label', `Retirer le dernier rang de ${skill.name}`);
     removeButton.addEventListener('click', () => {
-      const steps = getSkillCostSteps(skill);
+      const steps = getSkillCostSteps(skill, state.categoryCostIndex);
       const refund = steps[state.rank - 1];
       if (typeof refund !== 'number') return;
       state.rank -= 1;
@@ -647,7 +682,9 @@ async function loadRulesData() {
       raceSelect.add(new Option(race.name, race.id));
     });
     skills.forEach((skill) => {
-      const missingCharacteristics = skill.characteristics.filter((id) => !characteristicsById.has(id));
+      const missingCharacteristics = skill.characteristics
+        .flatMap((reference) => reference.split('/').map((id) => id.trim()))
+        .filter((id) => !characteristicsById.has(id));
       if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
     });
     renderSkillList();
