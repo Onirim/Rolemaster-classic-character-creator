@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "characteristics": [
+    { "id": "CO", "name": "Constitution", "development": true },
+    { "id": "AG", "name": "Agilité", "development": true },
+    { "id": "AD", "name": "Autodiscipline", "development": true },
+    { "id": "ME", "name": "Mémoire", "development": true },
+    { "id": "RS", "name": "Raisonnement", "development": true },
+    { "id": "FO", "name": "Force", "development": false },
+    { "id": "RP", "name": "Rapidité", "development": false },
+    { "id": "PR", "name": "Présence", "development": false },
+    { "id": "EM", "name": "Empathie", "development": false },
+    { "id": "IT", "name": "Intuition", "development": false }
+  ]
+}

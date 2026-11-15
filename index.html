@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111916">
+    <meta name="description" content="Créez et gérez vos personnages Rolemaster Classic.">
+    <title>Rolemaster Classic — Créateur de personnage</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#accueil" aria-label="Rolemaster Classic, accueil">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M20 3.5 34.3 11.8v16.4L20 36.5 5.7 28.2V11.8L20 3.5Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="m20 9 8.5 5v12L20 31l-8.5-5V14L20 9Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M20 9v22m-8.5-17L20 19l8.5-5M11.5 26l8.5-5 8.5 5" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">ROLEMASTER</span>
+            <span class="brand-edition">CLASSIC CHARACTER CREATOR</span>
+          </span>
+        </a>
+
+        <div class="topbar-note"><span class="status-dot"></span> Votre prochaine aventure commence ici</div>
+      </header>
+
+      <main>
+        <nav class="step-nav" aria-label="Étapes de création du personnage">
+          <button class="step-tab is-active" id="home-step" type="button" aria-current="step">
+            <span class="step-number">00</span>
+            <span>Accueil</span>
+          </button>
+          <button class="step-tab is-locked" id="profession-step" type="button" disabled aria-disabled="true" title="Commencez la création pour accéder à cette étape">
+            <span class="step-number">01</span>
+            <span>Race &amp; profession</span>
+            <svg class="lock-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 6V4.75a3.25 3.25 0 1 1 6.5 0V6M3.5 6h9v7h-9V6Z"/></svg>
+          </button>
+          <span class="nav-progress" aria-hidden="true"><span></span></span>
+        </nav>
+
+        <section class="welcome" id="accueil" aria-labelledby="welcome-title">
+          <div class="welcome-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> ATELIER DE PERSONNAGES</p>
+            <h1 id="welcome-title">Chaque légende<br>commence <em>quelque part.</em></h1>
+            <p class="intro">Préparez votre prochaine aventure dans l’univers de Rolemaster Classic. Créez un nouveau personnage ou retrouvez une fiche déjà sauvegardée.</p>
+
+            <div class="actions" aria-label="Actions de personnage">
+              <button class="action-card action-primary" id="new-character" type="button">
+                <span class="action-icon new-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </span>
+                <span class="action-text"><strong>Créer un nouveau personnage</strong><small>Commencer une nouvelle aventure</small></span>
+                <svg class="action-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4"/></svg>
+              </button>
+              <button class="action-card action-secondary" type="button" data-notice="L’import de personnage sera bientôt disponible.">
+                <span class="action-icon import-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 14v5h14v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="action-text"><strong>Importer un personnage existant</strong><small>Reprendre une fiche sauvegardée</small></span>
+                <svg class="action-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4"/></svg>
+              </button>
+            </div>
+            <p class="privacy-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 13 4v3.6c0 3.1-2.1 5.3-5 6.6-2.9-1.3-5-3.5-5-6.6V4l5-2.2Z"/><path d="m5.8 7.8 1.5 1.5 3-3"/></svg> Vos personnages restent sous votre contrôle.</p>
+          </div>
+
+          <aside class="hero-art" aria-label="Illustration décorative évoquant une aventure fantastique">
+            <div class="art-orbit orbit-one"></div>
+            <div class="art-orbit orbit-two"></div>
+            <div class="art-glow"></div>
+            <svg class="mountain-art" viewBox="0 0 640 570" fill="none" aria-hidden="true">
+              <path d="M56 447 222 190l76 113 71-178 215 322H56Z" fill="url(#peakBack)"/>
+              <path d="m222 190 51 76-28-8-24 23-21-8-19 19 41-102Zm147-65 43 96-34-19-22 23-29-15-25 14 67-99Z" fill="#F3F5F2" opacity=".9"/>
+              <path d="m56 447 166-257 64 95-42 162H56Z" fill="url(#peakLeft)"/>
+              <path d="m298 303 71-178 215 322H270l28-144Z" fill="url(#peakRight)"/>
+              <path d="m369 125 45 96-36-20-16 26-26-13-24 20 57-109Z" fill="#E4EAE5" opacity=".84"/>
+              <path d="M86 447c68-36 124-40 179-17 51 22 100 19 144-5 54-30 102-34 170 2v50H86v-30Z" fill="url(#valley)"/>
+              <path d="M105 474c84-22 156-19 220 5 64 24 131 19 211-9" stroke="#D9B876" stroke-opacity=".64" stroke-width="1.4"/>
+              <path d="M320 348v74m-16-50h32m-26 50h20" stroke="#E7C989" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="320" cy="346" r="5" fill="#E7C989"/>
+              <defs>
+                <linearGradient id="peakBack" x1="318" y1="125" x2="318" y2="447" gradientUnits="userSpaceOnUse"><stop stop-color="#A8B9B0"/><stop offset="1" stop-color="#526E64"/></linearGradient>
+                <linearGradient id="peakLeft" x1="145" y1="190" x2="205" y2="447" gradientUnits="userSpaceOnUse"><stop stop-color="#607C70"/><stop offset="1" stop-color="#263F39"/></linearGradient>
+                <linearGradient id="peakRight" x1="405" y1="125" x2="444" y2="447" gradientUnits="userSpaceOnUse"><stop stop-color="#859A8F"/><stop offset="1" stop-color="#344F47"/></linearGradient>
+                <linearGradient id="valley" x1="320" y1="410" x2="320" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#26443B"/><stop offset="1" stop-color="#142B28"/></linearGradient>
+              </defs>
+            </svg>
+            <div class="art-caption"><span class="caption-rule"></span><span>LE MONDE ATTEND<br><strong>VOTRE HISTOIRE</strong></span></div>
+            <div class="art-coordinate">47° 18′ N &nbsp;·&nbsp; 12° 44′ E</div>
+          </aside>
+        </section>
+
+        <section class="creation" id="creation" aria-labelledby="creation-title" hidden>
+          <div class="creation-heading">
+            <p class="eyebrow"><span class="eyebrow-line"></span> ÉTAPE 1 &nbsp;·&nbsp; IDENTITÉ DU PERSONNAGE</p>
+            <h1 id="creation-title">Race &amp; <em>profession</em></h1>
+            <p class="intro">Choisissez la voie qui façonnera l’apprentissage et les talents de votre personnage.</p>
+          </div>
+
+          <div class="creation-grid">
+            <section class="selection-panel" aria-labelledby="profession-label">
+              <div class="panel-heading">
+                <div>
+                  <p class="section-kicker">VOTRE VOIE</p>
+                  <h2 id="profession-label">Choisir une profession</h2>
+                </div>
+                <span class="required-label"><span></span> REQUIS</span>
+              </div>
+              <label class="select-label" for="profession-select">Profession</label>
+              <div class="select-wrap">
+                <select id="profession-select" name="profession" aria-describedby="profession-hint" disabled>
+                  <option value="">Chargement des professions…</option>
+                </select>
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
+              </div>
+              <p class="field-hint" id="profession-hint">La profession détermine les domaines où votre personnage progresse le plus facilement.</p>
+              <p class="data-error" id="profession-error" role="alert" hidden>Impossible de charger les professions.</p>
+
+              <div class="race-placeholder">
+                <span class="placeholder-icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none"><path d="M6 8V6.5a4 4 0 0 1 8 0V8m-9 0h10v8H5V8Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span><strong>Choix de la race</strong><small>Cette partie sera ajoutée prochainement.</small></span>
+                <span class="coming-soon">À VENIR</span>
+              </div>
+            </section>
+
+            <section class="profession-detail" id="profession-detail" aria-live="polite" aria-label="Détails de la profession" hidden>
+              <div class="detail-topline"><span class="detail-emblem" aria-hidden="true">✦</span><span id="detail-realm">ROYAUME DES ARMES</span></div>
+              <h2 id="detail-name">Guerrier</h2>
+              <p class="detail-description" id="detail-description"></p>
+              <div class="detail-divider"></div>
+              <p class="detail-label">CARACTÉRISTIQUES PRINCIPALES</p>
+              <div class="stat-list" id="prime-requisites"></div>
+              <div class="detail-note"><span class="note-mark">i</span><span>Ces caractéristiques sont les prérequis principaux de la profession.</span></div>
+            </section>
+
+            <div class="empty-detail" id="empty-detail">
+              <span class="empty-detail-icon" aria-hidden="true">✦</span>
+              <strong>Votre profession apparaîtra ici</strong>
+              <span>Sélectionnez une profession pour consulter ses caractéristiques.</span>
+            </div>
+          </div>
+
+          <div class="creation-actions">
+            <button class="back-button" id="back-home" type="button"><span aria-hidden="true">←</span> Retour à l’accueil</button>
+            <button class="continue-button" type="button" disabled>Continuer <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <footer class="page-footer">
+          <span>ROLEMASTER CLASSIC</span>
+          <span class="footer-divider"></span>
+          <span>UN OUTIL DE CRÉATION DE PERSONNAGES</span>
+          <span class="footer-version">PRÉVERSION <span>01</span></span>
+        </footer>
+      </main>
+    </div>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
