@@ -8,6 +8,28 @@ const professionDetail = document.querySelector('#profession-detail');
 const emptyDetail = document.querySelector('#empty-detail');
 const professionsById = new Map();
 const characteristicsById = new Map();
+const themeSelect = document.querySelector('#theme-select');
+
+function applyTheme(theme) {
+  const selectedTheme = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = selectedTheme;
+  themeSelect.value = selectedTheme;
+  document.querySelector('meta[name="theme-color"]').content = selectedTheme === 'dark' ? '#111916' : '#f5f7f6';
+  try {
+    localStorage.setItem('rolemaster-theme', selectedTheme);
+  } catch (error) {
+    // The selected theme still applies for this session when storage is unavailable.
+  }
+}
+
+let savedTheme = 'dark';
+try {
+  savedTheme = localStorage.getItem('rolemaster-theme') || 'dark';
+} catch (error) {
+  // Keep the default theme when storage is unavailable.
+}
+applyTheme(savedTheme);
+themeSelect.addEventListener('change', () => applyTheme(themeSelect.value));
 
 function showView(view) {
   const isCreation = view === 'creation';
