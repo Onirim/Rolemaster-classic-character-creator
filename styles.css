@@ -188,9 +188,16 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .roll-card.is-rolled { border-style: solid; border-color: #52655a; background: #202d26; cursor: grab; }
 .roll-card.is-rolled:active { cursor: grabbing; }
 .roll-card.is-selected { border-color: #d0ad6c; box-shadow: 0 0 0 2px rgba(208,173,108,.2); }
-.roll-card.is-assigned { background: #26372e; }
+.roll-card.is-assigned { border-color: #3b423d; background: #202522; }
+.roll-card.is-assigned .roll-metric { color: #919b94; }
+.roll-card.is-assigned .roll-metric strong { color: #aab3ad; }
+.roll-card.is-assigned .roll-potential strong { color: #828c85; }
+.roll-card.is-assigned .roll-potential-result strong { color: #a99b75; }
 .roll-card.is-dragging { opacity: .48; }
 .roll-assignment { position: absolute; top: 5px; right: 6px; min-width: 17px; padding: 2px 4px; border-radius: 3px; background: #354c3e; color: #d0e1d5; font: 700 7px 'Manrope', sans-serif; text-align: center; }
+.roll-card.is-assigned .roll-assignment { background: #343a35; color: #b0b8b2; }
+.roll-remove-zone { margin-top: 10px; padding: 8px; border: 1px dashed #465149; border-radius: 5px; color: #9aa69e; font-size: 8px; text-align: center; transition: border-color .15s ease, background .15s ease, color .15s ease; }
+.roll-remove-zone.is-drop-target { border-color: #d0ad6c; background: #28372d; color: #ead8a7; }
 .stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .characteristic-card { min-width: 0; min-height: 59px; padding: 8px 10px; display: grid; grid-template-columns: 29px minmax(0, 1fr); align-items: center; gap: 8px; border: 1px solid #35443d; border-radius: 6px; background: #141d19; color: #d8e3dc; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
 .characteristic-card:hover { border-color: #778d7d; background: #1d2923; }
@@ -361,8 +368,15 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .roll-potential-result strong { color: #82652f; }
 :root[data-theme="light"] .roll-card.is-rolled { border-color: #b9c9be; background: #eef3ef; }
 :root[data-theme="light"] .roll-card.is-selected { border-color: #bd9854; box-shadow: 0 0 0 2px rgba(189,152,84,.2); }
-:root[data-theme="light"] .roll-card.is-assigned { background: #e4eee6; }
+:root[data-theme="light"] .roll-card.is-assigned { border-color: #cbd2cd; background: #e5e8e6; }
+:root[data-theme="light"] .roll-card.is-assigned .roll-metric { color: #7e8982; }
+:root[data-theme="light"] .roll-card.is-assigned .roll-metric strong { color: #68746c; }
+:root[data-theme="light"] .roll-card.is-assigned .roll-potential strong { color: #929b95; }
+:root[data-theme="light"] .roll-card.is-assigned .roll-potential-result strong { color: #8b7d5b; }
 :root[data-theme="light"] .roll-assignment { background: #d5e3d8; color: #294a40; }
+:root[data-theme="light"] .roll-card.is-assigned .roll-assignment { background: #d5dad6; color: #68736c; }
+:root[data-theme="light"] .roll-remove-zone { border-color: #d6ded8; color: #7e8b83; }
+:root[data-theme="light"] .roll-remove-zone.is-drop-target { border-color: #bd9854; background: #f5f0e5; color: #765f35; }
 :root[data-theme="light"] .characteristic-card { border-color: #dfe6e1; background: #fff; color: #33463d; }
 :root[data-theme="light"] .characteristic-card:hover { border-color: #8ca294; background: #f5f8f5; }
 :root[data-theme="light"] .characteristic-card.is-drop-target { border-color: #bd9854; background: #f5f0e5; box-shadow: 0 0 0 2px rgba(189,152,84,.2); }

@@ -170,12 +170,45 @@ function createRollCards() {
     card.addEventListener('dragend', () => card.classList.remove('is-dragging'));
     return card;
   }));
+
+  const removeZone = document.querySelector('#roll-remove-zone');
+  removeZone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    removeZone.classList.add('is-drop-target');
+  });
+  removeZone.addEventListener('dragleave', () => removeZone.classList.remove('is-drop-target'));
+  removeZone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    removeZone.classList.remove('is-drop-target');
+    const index = Number(event.dataTransfer.getData('text/plain'));
+    if (Number.isInteger(index)) removeRollAssignment(index);
+  });
 }
 
 function getPotentialValue(temporary, potentialRoll) {
   const statRangeIndex = potentialTable.initialStatRanges.findIndex((range) => temporary >= range.min && temporary <= range.max);
   const rollRange = potentialTable.potentialRollRanges.find((range) => potentialRoll >= range.min && potentialRoll <= range.max);
   return statRangeIndex < 0 || !rollRange ? null : rollRange.values[statRangeIndex];
+}
+
+function getAssignedValues(rollIndex, characteristicId) {
+  const roll = rolls[rollIndex];
+  let temporary = roll.temporary;
+  if (mainCharacteristicIds.has(characteristicId) && temporary < 90) temporary = 90;
+  const potential = temporary === roll.temporary
+    ? roll.potentialValue
+    : getPotentialValue(temporary, roll.potentialRoll) ?? temporary;
+  return { temporary, potential };
+}
+
+function removeRollAssignment(rollIndex) {
+  const characteristicId = [...rollAssignments.entries()].find(([, assignedIndex]) => assignedIndex === rollIndex)?.[0];
+  if (!characteristicId) return;
+  rollAssignments.delete(characteristicId);
+  selectedRollIndex = null;
+  setAllocationStatus(`Tirage retiré de ${characteristicsById.get(characteristicId).name}. Ses valeurs initiales sont rétablies.`);
+  renderAllocation();
 }
 
 function createCharacteristicCards(characteristics) {
@@ -209,6 +242,13 @@ function createCharacteristicCards(characteristics) {
       const index = Number(event.dataTransfer.getData('text/plain'));
       if (Number.isInteger(index) && rolls[index] !== null) assignRoll(index, characteristic.id);
     });
+    card.addEventListener('keydown', (event) => {
+      if ((event.key === 'Backspace' || event.key === 'Delete') && rollAssignments.has(characteristic.id)) {
+        event.preventDefault();
+        removeRollAssignment(rollAssignments.get(characteristic.id));
+        card.focus();
+      }
+    });
     return card;
   }));
   renderAllocation();
@@ -234,7 +274,8 @@ function assignRoll(rollIndex, characteristicId) {
   rollAssignments.set(characteristicId, rollIndex);
   selectedRollIndex = null;
   const characteristicName = characteristicsById.get(characteristicId).name;
-  setAllocationStatus(`${rolls[rollIndex]} attribué à ${characteristicName}.`);
+  const values = getAssignedValues(rollIndex, characteristicId);
+  setAllocationStatus(`${values.temporary} / ${values.potential} attribué à ${characteristicName}.`);
   renderAllocation();
 }
 
@@ -264,13 +305,13 @@ function renderAllocation() {
   document.querySelectorAll('.characteristic-card').forEach((card) => {
     const characteristicId = card.dataset.characteristicId;
     const rollIndex = rollAssignments.get(characteristicId);
-    const result = rollIndex === undefined ? null : rolls[rollIndex];
+    const result = rollIndex === undefined ? null : getAssignedValues(rollIndex, characteristicId);
     card.classList.toggle('has-value', result !== null);
     card.classList.toggle('is-drop-target', false);
     card.classList.toggle('is-prime-requisite', mainCharacteristicIds.has(characteristicId));
     card.querySelector('.characteristic-temporary').textContent = result === null ? '—' : String(result.temporary);
-    card.querySelector('.characteristic-potential').textContent = result === null ? '—' : String(result.potentialValue);
-    card.setAttribute('aria-label', `${characteristicsById.get(characteristicId).name}${mainCharacteristicIds.has(characteristicId) ? ', caractéristique principale' : ''} : ${result === null ? 'aucune valeur attribuée' : `temporaire ${result.temporary}, potentiel ${result.potentialValue}`}`);
+    card.querySelector('.characteristic-potential').textContent = result === null ? '—' : String(result.potential);
+    card.setAttribute('aria-label', `${characteristicsById.get(characteristicId).name}${mainCharacteristicIds.has(characteristicId) ? ', caractéristique principale' : ''} : ${result === null ? 'aucune valeur attribuée' : `temporaire ${result.temporary}, potentiel ${result.potential}`}`);
   });
 
   const rolledCount = rolls.filter((value) => value !== null).length;
