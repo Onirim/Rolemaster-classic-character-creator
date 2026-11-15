@@ -50,6 +50,38 @@
       "special": "categorie-arme"
     },
     {
+      "id": "cuir-souple",
+      "name": "Manœuvre en cuir souple",
+      "characteristics": ["AG/FO"],
+      "category": "Manœuvre en armure",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "cuir-rigide",
+      "name": "Manœuvre en cuir rigide",
+      "characteristics": ["AG/FO"],
+      "category": "Manœuvre en armure",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "cotte-de-maille",
+      "name": "Manœuvre en cotte de mailles",
+      "characteristics": ["AG/FO"],
+      "category": "Manœuvre en armure",
+      "type": "Principale",
+	  "special" : "none"
+    },
+	{
+      "id": "plate",
+      "name": "Manœuvre en plate",
+      "characteristics": ["AG/FO"],
+      "category": "Manœuvre en armure",
+      "type": "Principale",
+	  "special" : "none"
+    },
+    {
       "id": "escalade",
       "name": "Escalade",
       "characteristics": ["AG"],

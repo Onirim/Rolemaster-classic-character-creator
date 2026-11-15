@@ -425,15 +425,26 @@ function getAvailableWeaponCostIndex() {
   return availableIndex < 0 ? undefined : availableIndex;
 }
 
-function getSkillCostSteps(skill, categoryCostIndex) {
+function getSkillCostDefinition(skill, categoryCostIndex) {
   const rawCost = isWeaponCategorySkill(skill)
     ? getWeaponCategoryCostEntry()?.costs?.[categoryCostIndex]
     : getSkillCostEntry(skill)?.costs?.[0];
-  if (rawCost === undefined) return [];
-  return String(rawCost).split('/').map((part) => {
-    const cost = Number(part);
-    return Number.isFinite(cost) ? cost : null;
-  });
+  return rawCost === undefined ? [] : String(rawCost).split('/');
+}
+
+function getSkillCostAtRank(skill, categoryCostIndex, rankIndex) {
+  const parts = getSkillCostDefinition(skill, categoryCostIndex);
+  if (parts.length === 0 || rankIndex < 0) return undefined;
+
+  const repeatsLastCost = parts.at(-1) === '*';
+  const repeatCostIndex = parts.length - 2;
+  const part = repeatsLastCost && rankIndex >= repeatCostIndex
+    ? parts[repeatCostIndex]
+    : parts[rankIndex];
+  if (part === undefined || part === '*') return undefined;
+
+  const cost = Number(part);
+  return Number.isFinite(cost) ? cost : undefined;
 }
 
 function getSkillKey(skillId, special = '') {
@@ -450,9 +461,8 @@ function getNextSkillCost(skill, rank, key) {
   const categoryCostIndex = isWeaponCategorySkill(skill)
     ? state?.categoryCostIndex ?? getAvailableWeaponCostIndex()
     : undefined;
-  const steps = getSkillCostSteps(skill, categoryCostIndex);
   return {
-    cost: rank < steps.length ? steps[rank] : undefined,
+    cost: getSkillCostAtRank(skill, categoryCostIndex, rank),
     categoryCostIndex
   };
 }
@@ -616,8 +626,7 @@ function renderAcquiredSkills() {
     removeButton.title = 'Retirer le dernier rang et récupérer ses points';
     removeButton.setAttribute('aria-label', `Retirer le dernier rang de ${skill.name}`);
     removeButton.addEventListener('click', () => {
-      const steps = getSkillCostSteps(skill, state.categoryCostIndex);
-      const refund = steps[state.rank - 1];
+      const refund = getSkillCostAtRank(skill, state.categoryCostIndex, state.rank - 1);
       if (typeof refund !== 'number') return;
       state.rank -= 1;
       state.spent -= refund;
