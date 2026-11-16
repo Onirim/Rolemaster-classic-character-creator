@@ -7,7 +7,18 @@
       "characteristics": ["FO/FO/AG"],
       "category": "Combat",
       "type": "Principale",
-      "special": "categorie-arme"
+      "special": "categorie-arme",
+	  "costGroup": "armes-tranchantes-1-main"
+    },
+	{
+      "id": "armes-tranchantes-1-main-gauche",
+      "name": "Armes tranchantes 1 main (gauche)",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+      "special": "categorie-arme",
+	  "costGroup": "armes-tranchantes-1-main",
+	  "scoreModifier": -20
     },
 	{
       "id": "armes-contondantes-1-main",
@@ -15,7 +26,18 @@
       "characteristics": ["FO/FO/AG"],
       "category": "Combat",
       "type": "Principale",
-      "special": "categorie-arme"
+      "special": "categorie-arme",
+	  "costGroup": "armes-contondantes-1-main"
+    },
+	{
+      "id": "armes-contondantes-1-main-gauche",
+      "name": "Armes contondantes 1 main (gauche)",
+      "characteristics": ["FO/FO/AG"],
+      "category": "Combat",
+      "type": "Principale",
+      "special": "categorie-arme",
+	  "costGroup": "armes-contondantes-1-main",
+	  "scoreModifier": -20
     },
 	{
       "id": "armes-2-mains",
@@ -51,7 +73,7 @@
     },
     {
       "id": "cuir-souple",
-      "name": "Manœuvre en cuir souple",
+      "name": "Manœuvres en cuir souple",
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
@@ -59,7 +81,7 @@
     },
 	{
       "id": "cuir-rigide",
-      "name": "Manœuvre en cuir rigide",
+      "name": "Manœuvres en cuir rigide",
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
@@ -67,7 +89,7 @@
     },
 	{
       "id": "cotte-de-maille",
-      "name": "Manœuvre en cotte de mailles",
+      "name": "Manœuvres en cotte de mailles",
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
@@ -75,7 +97,7 @@
     },
 	{
       "id": "plate",
-      "name": "Manœuvre en plate",
+      "name": "Manœuvres en plate",
       "characteristics": ["AG"],
       "category": "Combat",
       "type": "Principale",
@@ -140,7 +162,7 @@
 	{
       "id": "listes-sort",
       "name": "Listes de sorts",
-      "characteristics": ["variable"],
+      "characteristics": ["aucune"],
       "category": "Listes de sorts",
       "type": "Principale",
 	  "special" : "listes-sort"

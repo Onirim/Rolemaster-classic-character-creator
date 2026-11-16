@@ -424,12 +424,34 @@ function getWeaponCategoryCostEntry() {
   return profession?.skillCost?.find((entry) => entry.name === 'categorie-armes') || null;
 }
 
+function getWeaponCostGroup(skill) {
+  return skill.costGroup || skill.id;
+}
+
+function getAssignedWeaponCategoryCostIndex(skill) {
+  const costGroup = getWeaponCostGroup(skill);
+  const sharedState = [...acquiredSkills.values()].find((state) => {
+    if (state.categoryCostIndex === undefined) return false;
+    const acquiredSkill = skills.find((entry) => entry.id === state.skillId);
+    return acquiredSkill && isWeaponCategorySkill(acquiredSkill) && getWeaponCostGroup(acquiredSkill) === costGroup;
+  });
+  return sharedState?.categoryCostIndex;
+}
+
 function getAvailableWeaponCostIndex() {
   const entry = getWeaponCategoryCostEntry();
   if (!entry || !Array.isArray(entry.costs)) return undefined;
-  const usedIndexes = new Set([...acquiredSkills.values()]
-    .filter((state) => state.categoryCostIndex !== undefined)
-    .map((state) => state.categoryCostIndex));
+  const usedIndexes = new Set();
+  const usedGroups = new Set();
+  for (const state of acquiredSkills.values()) {
+    if (state.categoryCostIndex === undefined) continue;
+    const acquiredSkill = skills.find((skill) => skill.id === state.skillId);
+    if (!acquiredSkill || !isWeaponCategorySkill(acquiredSkill)) continue;
+    const costGroup = getWeaponCostGroup(acquiredSkill);
+    if (usedGroups.has(costGroup)) continue;
+    usedGroups.add(costGroup);
+    usedIndexes.add(state.categoryCostIndex);
+  }
   const availableIndex = entry.costs.findIndex((_, index) => !usedIndexes.has(index));
   return availableIndex < 0 ? undefined : availableIndex;
 }
@@ -468,7 +490,7 @@ function getSkillSpecial(skill, row = null) {
 function getNextSkillCost(skill, rank, key) {
   const state = acquiredSkills.get(key);
   const categoryCostIndex = isWeaponCategorySkill(skill)
-    ? state?.categoryCostIndex ?? getAvailableWeaponCostIndex()
+    ? state?.categoryCostIndex ?? getAssignedWeaponCategoryCostIndex(skill) ?? getAvailableWeaponCostIndex()
     : undefined;
   return {
     cost: getSkillCostAtRank(skill, categoryCostIndex, rank),
