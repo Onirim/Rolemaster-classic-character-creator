@@ -213,6 +213,13 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .characteristic-assigned .characteristic-potential { color: #d7c99f; }
 .characteristic-card:not(.has-value) .characteristic-assigned { color: #87958d; font-size: 11px; font-weight: 500; }
 .allocation-status { min-height: 17px; margin: 13px 2px 0; color: #9eaaa3; font-size: 9px; }
+.realm-stat-choice { margin-top: 14px; padding: 19px 22px; display: flex; align-items: center; justify-content: space-between; gap: 22px; border: 1px solid #435447; border-radius: 8px; background: linear-gradient(110deg, #1d2b23, #1a2520 65%, #202a23); }
+.realm-stat-copy { min-width: 0; }
+.realm-stat-copy .section-kicker { margin-bottom: 5px; }
+.realm-stat-copy h2 { margin: 0; color: var(--ink); font: 600 18px/1.35 'Manrope', sans-serif; }
+.realm-stat-copy p:last-child { margin: 5px 0 0; color: #a2afa7; font-size: 12px; line-height: 1.5; }
+.realm-stat-select-wrap { width: min(100%, 300px); flex: 0 0 300px; }
+.realm-stat-select-wrap select { min-height: 45px; }
 
 .skills-view { flex: 1; padding: 40px 0 30px; }
 .skills-heading h1 { font-size: clamp(40px, 4.1vw, 56px); }
@@ -326,6 +333,9 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .characteristics-heading h1 { font-size: 39px; }
   .characteristics-heading .intro { margin-bottom: 19px; }
   .roll-panel, .stat-panel { padding: 15px; }
+  .realm-stat-choice { align-items: stretch; flex-direction: column; gap: 12px; padding: 16px; }
+  .realm-stat-copy h2 { font-size: 16px; }
+  .realm-stat-select-wrap { width: 100%; flex-basis: auto; }
   .roll-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .roll-card { min-height: 96px; padding-inline: 3px; }
   .roll-invitation { font-size: 8px; }
@@ -477,6 +487,8 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .characteristic-assigned .characteristic-potential { color: #82652f; }
 :root[data-theme="light"] .characteristic-card:not(.has-value) .characteristic-assigned { color: #9aa49f; }
 :root[data-theme="light"] .allocation-status { color: #78847f; }
+:root[data-theme="light"] .realm-stat-choice { border-color: #e1e7e0; background: linear-gradient(110deg, #fffdf7, #f7f8f4 65%, #eef3ee); }
+:root[data-theme="light"] .realm-stat-copy p:last-child { color: #78847f; }
 :root[data-theme="light"] .development-summary { border-color: #e1e7e0; background: linear-gradient(110deg, #fffdf7, #f7f8f4 65%, #eef3ee); }
 :root[data-theme="light"] .development-icon { border-color: #e8dfc7; background: #f6f1e3; color: #a88545; }
 :root[data-theme="light"] .development-copy h2 { color: #263b32; }

@@ -33,6 +33,12 @@ let selectedProfessionId = '';
 const acquiredSkills = new Map();
 const skillSpecialValues = new Map();
 let selectedSkillCategory = '';
+let selectedPowerRealmStat = '';
+const powerRealms = [
+  { name: 'Théurgie', statId: 'IT' },
+  { name: 'Essence', statId: 'EM' },
+  { name: 'Mentalisme', statId: 'PR' }
+];
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -102,7 +108,11 @@ function showView(view) {
 function updateStepAvailability() {
   const hasIdentity = Boolean(professionSelect.value && raceSelect.value);
   const allCharacteristicsAssigned = characteristicsInOrder.length === 10 && rollAssignments.size === 10;
-  const canOpenSkills = hasIdentity && allCharacteristicsAssigned;
+  const profession = professionsById.get(professionSelect.value);
+  const needsRealmChoice = profession?.realmStat?.toLocaleLowerCase('fr-FR') === 'none';
+  const hasRealmChoice = !needsRealmChoice || Boolean(selectedPowerRealmStat);
+  const canOpenSkills = hasIdentity && allCharacteristicsAssigned && hasRealmChoice;
+  renderRealmStatChoice(hasIdentity && allCharacteristicsAssigned && needsRealmChoice);
   continueButton.disabled = !hasIdentity;
   characteristicsStep.disabled = !hasIdentity;
   characteristicsStep.toggleAttribute('aria-disabled', !hasIdentity);
@@ -111,11 +121,21 @@ function updateStepAvailability() {
   continueSkillsButton.disabled = !canOpenSkills;
   skillsStep.disabled = !canOpenSkills;
   skillsStep.toggleAttribute('aria-disabled', !canOpenSkills);
-  skillsStep.title = canOpenSkills ? '' : 'Choisissez une race et une profession, puis attribuez les dix caractéristiques';
+  skillsStep.title = canOpenSkills
+    ? ''
+    : needsRealmChoice && allCharacteristicsAssigned && !hasRealmChoice
+      ? 'Choisissez votre Royaume de Pouvoir'
+      : 'Choisissez une race et une profession, puis attribuez les dix caractéristiques';
   skillsStep.classList.toggle('is-locked', !canOpenSkills);
 
   if (!hasIdentity && (!characteristicsView.hidden || !skillsView.hidden)) showView('creation');
   else if (!allCharacteristicsAssigned && !skillsView.hidden) showView('characteristics');
+}
+
+function renderRealmStatChoice(shouldShow) {
+  const choicePanel = document.querySelector('#realm-stat-choice');
+  choicePanel.hidden = !shouldShow;
+  document.querySelector('#realm-stat-select').value = selectedPowerRealmStat;
 }
 
 function renderProfession(profession) {
@@ -541,8 +561,14 @@ function getMartialArtsRemovalBlocker(skill, state) {
 
 function getSpellListSkills(profession) {
   if (!profession || !Array.isArray(profession.spellLists)) return [];
+  const realmStat = profession.realmStat?.toLocaleLowerCase('fr-FR') === 'none'
+    ? selectedPowerRealmStat
+    : profession.realmStat;
+  const selectedRealm = powerRealms.find((realm) => realm.statId === realmStat)?.name;
+  if (!selectedRealm) return [];
   return spellLists
     .filter((spellList) => profession.spellLists.includes(spellList.type))
+    .filter((spellList) => spellList.realm === selectedRealm)
     .filter((spellList) => spellList.type !== 'Base' || spellList.profession === profession.id)
     .map((spellList) => ({
       id: `liste-sort-${spellList.id}`,
@@ -560,7 +586,18 @@ function getSpellListSkills(profession) {
 }
 
 function setSkillsForProfession(profession) {
-  skills = [...configuredSkills, ...getSpellListSkills(profession)];
+  const spellListSkills = getSpellListSkills(profession);
+  const availableSpellListIds = new Set(spellListSkills.map((skill) => skill.id));
+  let removedSpellListCount = 0;
+  for (const [key, state] of acquiredSkills.entries()) {
+    const previousSkill = skills.find((skill) => skill.id === state.skillId);
+    if (previousSkill?.spellListId && !availableSpellListIds.has(state.skillId)) {
+      acquiredSkills.delete(key);
+      removedSpellListCount += 1;
+    }
+  }
+  skills = [...configuredSkills, ...spellListSkills];
+  return removedSpellListCount;
 }
 
 function populateSkillCategoryFilter() {
@@ -963,15 +1000,30 @@ acquiredSkillList.addEventListener('drop', (event) => {
 });
 
 professionSelect.addEventListener('change', () => {
-  if (selectedProfessionId && selectedProfessionId !== professionSelect.value) {
+  const professionChanged = selectedProfessionId !== professionSelect.value;
+  if (selectedProfessionId && professionChanged) {
     acquiredSkills.clear();
     document.querySelector('#skill-purchase-status').textContent = 'Les compétences acquises ont été retirées car la profession a changé.';
   }
+  if (professionChanged) selectedPowerRealmStat = '';
   selectedProfessionId = professionSelect.value;
   const profession = professionsById.get(professionSelect.value);
   setSkillsForProfession(profession);
   populateSkillCategoryFilter();
   renderProfession(profession);
+  renderDevelopmentPoints();
+  updateStepAvailability();
+});
+document.querySelector('#realm-stat-select').addEventListener('change', () => {
+  const nextRealmStat = document.querySelector('#realm-stat-select').value;
+  if (nextRealmStat === selectedPowerRealmStat) return;
+  selectedPowerRealmStat = nextRealmStat;
+  const profession = professionsById.get(professionSelect.value);
+  const removedSpellListCount = setSkillsForProfession(profession);
+  populateSkillCategoryFilter();
+  document.querySelector('#skill-purchase-status').textContent = removedSpellListCount > 0
+    ? 'Le royaume a changé ; les listes de sorts incompatibles ont été retirées et leurs PD rendus.'
+    : 'Royaume de Pouvoir choisi.';
   renderDevelopmentPoints();
   updateStepAvailability();
 });

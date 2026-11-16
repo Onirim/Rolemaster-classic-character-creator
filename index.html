@@ -217,6 +217,22 @@
           </div>
 
           <p class="allocation-status" id="allocation-status" role="status" aria-live="polite">Les caractéristiques suivent l’ordre du fichier de configuration.</p>
+          <section class="realm-stat-choice" id="realm-stat-choice" aria-labelledby="realm-stat-title" hidden>
+            <div class="realm-stat-copy">
+              <p class="section-kicker">ROYAUME DE POUVOIR</p>
+              <h2 id="realm-stat-title">Choisissez votre royaume</h2>
+              <p>Ce choix détermine les listes de sorts accessibles à votre personnage.</p>
+            </div>
+            <div class="select-wrap realm-stat-select-wrap">
+              <select id="realm-stat-select" aria-label="Royaume de Pouvoir">
+                <option value="">Sélectionnez un royaume</option>
+                <option value="IT">Théurgie</option>
+                <option value="EM">Essence</option>
+                <option value="PR">Mentalisme</option>
+              </select>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
+            </div>
+          </section>
           <div class="creation-actions">
             <button class="back-button" id="back-profession" type="button"><span aria-hidden="true">←</span> Retour à race &amp; profession</button>
             <button class="continue-button" id="continue-skills" type="button" disabled>Compétences principales <span aria-hidden="true">→</span></button>
