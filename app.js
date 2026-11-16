@@ -148,6 +148,12 @@ function renderRacePresentation() {
 
   document.querySelector('#race-detail-name').textContent = selectedRace.name;
   document.querySelector('#race-detail-description').textContent = selectedRace.description;
+  const backgroundOptions = document.querySelector('#race-background-options');
+  const optionCount = Number(selectedRace.backgroundOptions ?? 0);
+  const optionsChip = document.createElement('span');
+  optionsChip.className = 'stat-chip';
+  optionsChip.textContent = `${optionCount} point${optionCount === 1 ? '' : 's'}`;
+  backgroundOptions.replaceChildren(optionsChip);
 }
 
 function setAllocationStatus(message) {

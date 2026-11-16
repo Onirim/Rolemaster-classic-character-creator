@@ -124,7 +124,7 @@
               <div class="panel-heading">
                 <div>
                   <p class="section-kicker">VOTRE VOIE</p>
-                  <h2 id="profession-label">Choisir une profession</h2>
+                  <h2 id="profession-label">Choisir une profession et une race</h2>
                 </div>
                 <span class="required-label"><span></span> REQUIS</span>
               </div>
@@ -141,11 +141,12 @@
               <div class="race-selection">
                 <label class="select-label" for="race-select">Race</label>
                 <div class="select-wrap">
-                  <select id="race-select" name="race" aria-label="Race" disabled>
+                  <select id="race-select" name="race" aria-label="Race" aria-describedby="race-hint" disabled>
                     <option value="">Chargement des races…</option>
                   </select>
                   <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
                 </div>
+                <p class="field-hint" id="race-hint">La race apporte des modificateurs aux caractéristiques ainsi qu'un bagage culturel important.</p>
                 <p class="data-error" id="race-error" role="alert" hidden>Impossible de charger les races.</p>
               </div>
             </section>
@@ -157,12 +158,14 @@
               <div class="detail-divider"></div>
               <p class="detail-label">CARACTÉRISTIQUES PRINCIPALES</p>
               <div class="stat-list" id="prime-requisites"></div>
-              <div class="detail-note"><span class="note-mark">i</span><span>Ces caractéristiques sont les prérequis principaux de la profession.</span></div>
               <section class="race-flavor" id="race-flavor" aria-live="polite" hidden>
                 <div class="detail-divider"></div>
                 <p class="detail-label">PRÉSENTATION DE LA RACE</p>
                 <h3 id="race-detail-name"></h3>
                 <p class="race-detail-description" id="race-detail-description"></p>
+                <div class="detail-divider"></div>
+                <p class="detail-label">POINTS D’HISTORIQUE DISPONIBLES</p>
+                <div class="stat-list" id="race-background-options"></div>
               </section>
             </section>
 
