@@ -6,6 +6,7 @@
       "name": "Guerrier",
       "description": "Spécialiste des armes, le Guerrier maîtrise aisément une grande variété d’armes et peut porter les armures les plus lourdes. Il est moins à l’aise dans les manœuvres délicates et la magie.",
       "realm": "Royaume des Armes",
+	  "spellLists": ["Libre"],
 	  "realmStat": "none",
       "primeRequisites": ["CO", "FO"],
       "skillCost": [

@@ -25,6 +25,8 @@ const rollAssignments = new Map();
 let selectedRollIndex = null;
 let potentialTable = null;
 let skills = [];
+let configuredSkills = [];
+let spellLists = [];
 let characteristicBonusRows = [];
 let baseDevelopmentPoints = null;
 let selectedProfessionId = '';
@@ -415,7 +417,7 @@ function getSkillCostEntry(skill) {
   const profession = professionsById.get(professionSelect.value);
   if (!profession || !Array.isArray(profession.skillCost)) return null;
   return profession.skillCost.find((entry) =>
-    entry.skillId === skill.id || entry.name === skill.id || entry.name === skill.special
+    entry.skillId === skill.id || entry.name === skill.id || entry.name === skill.costReference || entry.name === skill.special
   ) || null;
 }
 
@@ -537,6 +539,30 @@ function getMartialArtsRemovalBlocker(skill, state) {
     : { tier: progression.tier + 1, rank: nextTierRank };
 }
 
+function getSpellListSkills(profession) {
+  if (!profession || !Array.isArray(profession.spellLists)) return [];
+  return spellLists
+    .filter((spellList) => profession.spellLists.includes(spellList.type))
+    .filter((spellList) => spellList.type !== 'Base' || spellList.profession === profession.id)
+    .map((spellList) => ({
+      id: `liste-sort-${spellList.id}`,
+      name: spellList.name,
+      characteristics: ['aucune'],
+      category: 'Listes de sorts',
+      type: spellList.type,
+      special: 'none',
+      costReference: 'listes-sort',
+      spellListId: spellList.id,
+      spellListType: spellList.type,
+      spellListRealm: spellList.realm,
+      spellListProfession: spellList.profession
+    }));
+}
+
+function setSkillsForProfession(profession) {
+  skills = [...configuredSkills, ...getSpellListSkills(profession)];
+}
+
 function populateSkillCategoryFilter() {
   const categoryFilter = document.querySelector('#skill-category-filter');
   const categories = [...new Set(skills.map((skill) => skill.category).filter(Boolean))]
@@ -588,7 +614,9 @@ function renderSkillList() {
     name.textContent = skill.name;
     const description = document.createElement('p');
     description.className = 'skill-offer-details';
-    description.textContent = `${skill.category} · ${skill.type}`;
+    description.textContent = skill.spellListId
+      ? `${skill.spellListType} · ${skill.spellListRealm}`
+      : `${skill.category} · ${skill.type}`;
     primary.append(name, description);
 
     const characteristics = document.createElement('div');
@@ -747,6 +775,7 @@ function renderAcquiredSkills() {
     subtitle.className = 'skill-offer-details';
     subtitle.textContent = isWeaponCategorySkill(skill)
       ? `${skill.category} · Coût ${getSkillCostDefinition(skill, state.categoryCostIndex).join('/')}`
+      : skill.spellListId ? `${skill.spellListType} · ${skill.spellListRealm}`
       : state.special ? `${state.special} · ${skill.category}` : skill.category;
     primary.append(name, subtitle);
 
@@ -828,30 +857,34 @@ function renderAcquiredSkills() {
 
 async function loadRulesData() {
   try {
-    const [professionsResponse, characteristicsResponse, racesResponse, potentialResponse, skillsResponse, bonusResponse] = await Promise.all([
+    const [professionsResponse, characteristicsResponse, racesResponse, potentialResponse, skillsResponse, bonusResponse, spellListsResponse] = await Promise.all([
       fetch('./data/professions.json'),
       fetch('./data/caractéristiques.json'),
       fetch('./data/races.json'),
       fetch('./data/potential-table.json'),
       fetch('./data/compétences.json'),
-      fetch('./data/characteristic-bonuses.json')
+      fetch('./data/characteristic-bonuses.json'),
+      fetch('./data/sorts.json')
     ]);
-    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok || !potentialResponse.ok || !skillsResponse.ok || !bonusResponse.ok) throw new Error('Fichiers de configuration indisponibles');
-    const [professionData, characteristicData, raceData, potentialData, skillData, bonusData] = await Promise.all([
+    if (!professionsResponse.ok || !characteristicsResponse.ok || !racesResponse.ok || !potentialResponse.ok || !skillsResponse.ok || !bonusResponse.ok || !spellListsResponse.ok) throw new Error('Fichiers de configuration indisponibles');
+    const [professionData, characteristicData, raceData, potentialData, skillData, bonusData, spellListData] = await Promise.all([
       professionsResponse.json(),
       characteristicsResponse.json(),
       racesResponse.json(),
       potentialResponse.json(),
       skillsResponse.json(),
-      bonusResponse.json()
+      bonusResponse.json(),
+      spellListsResponse.json()
     ]);
     if (!Array.isArray(professionData.professions) || professionData.professions.length === 0) throw new Error('Aucune profession configurée');
     if (!Array.isArray(characteristicData.characteristics)) throw new Error('Liste de caractéristiques invalide');
     if (!Array.isArray(raceData.races) || raceData.races.length === 0) throw new Error('Aucune race configurée');
     if (!Array.isArray(potentialData.initialStatRanges) || !Array.isArray(potentialData.potentialRollRanges)) throw new Error('Table des potentiels invalide');
-    if (!Array.isArray(skillData.skills) || !Array.isArray(bonusData.rows)) throw new Error('Fichiers de compétences ou de bonus invalides');
+    if (!Array.isArray(skillData.skills) || !Array.isArray(bonusData.rows) || !Array.isArray(spellListData.spellLists)) throw new Error('Fichiers de compétences, de listes de sorts ou de bonus invalides');
     potentialTable = potentialData;
-    skills = skillData.skills;
+    configuredSkills = skillData.skills.filter((skill) => skill.id !== 'listes-sort');
+    skills = configuredSkills;
+    spellLists = spellListData.spellLists;
     characteristicBonusRows = bonusData.rows;
 
     characteristicData.characteristics.forEach((characteristic) => {
@@ -935,7 +968,10 @@ professionSelect.addEventListener('change', () => {
     document.querySelector('#skill-purchase-status').textContent = 'Les compétences acquises ont été retirées car la profession a changé.';
   }
   selectedProfessionId = professionSelect.value;
-  renderProfession(professionsById.get(professionSelect.value));
+  const profession = professionsById.get(professionSelect.value);
+  setSkillsForProfession(profession);
+  populateSkillCategoryFilter();
+  renderProfession(profession);
   renderDevelopmentPoints();
   updateStepAvailability();
 });
