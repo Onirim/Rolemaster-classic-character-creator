@@ -238,6 +238,8 @@
             <span class="development-unit">PD</span>
           </section>
 
+          <div class="skill-category-bar" id="skill-category-filter" role="group" aria-label="Filtrer les compétences par catégorie"></div>
+
           <div class="skill-purchase-layout">
             <section class="skills-list-section" aria-labelledby="skills-list-title">
               <div class="skills-list-heading">
@@ -246,15 +248,6 @@
                   <h2 id="skills-list-title">Compétences disponibles</h2>
                 </div>
                 <span class="progress-count" id="skills-count">0 compétence</span>
-              </div>
-              <div class="skill-filter-row">
-                <label for="skill-category-filter">Filtrer par catégorie</label>
-                <div class="select-wrap skill-category-filter-wrap">
-                  <select id="skill-category-filter" aria-label="Filtrer les compétences par catégorie">
-                    <option value="">Toutes les catégories</option>
-                  </select>
-                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
-                </div>
               </div>
               <div class="skill-list" id="skill-list"></div>
             </section>
@@ -270,7 +263,7 @@
               <div class="acquired-skill-list" id="acquired-skill-list" aria-label="Compétences achetées"></div>
             </section>
           </div>
-          <p class="skill-purchase-status" id="skill-purchase-status" role="status" aria-live="polite">Glissez une compétence vers la droite pour acheter un rang. Chaque rang suivant suit le coût indiqué pour la profession.</p>
+          <p class="skill-purchase-status" id="skill-purchase-status" role="status" aria-live="polite">Achetez un rang avec le bouton, ou glissez une compétence vers la droite. Utilisez + et − pour ajuster les rangs acquis.</p>
           <p class="data-error" id="skills-error" role="alert" hidden>Impossible de charger les compétences.</p>
 
           <div class="creation-actions">

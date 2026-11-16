@@ -232,11 +232,12 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .skills-list-heading { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 14px; }
 .skills-list-heading .section-kicker { margin-bottom: 7px; }
 .skills-list-heading h2 { margin: 0; color: var(--ink); font: 600 19px/1.3 'Manrope', sans-serif; }
-.skill-filter-row { display: flex; align-items: center; gap: 12px; margin: 0 0 13px; color: #aebbb4; font-size: 9px; font-weight: 600; }
-.skill-category-filter-wrap { width: min(100%, 250px); }
-.skill-category-filter-wrap select { min-height: 38px; padding-left: 11px; font-size: 10px; }
-.skill-category-filter-wrap > svg { right: 11px; width: 15px; height: 15px; }
+.skill-category-bar { margin: 16px 0 18px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 8px; border: 1px solid #34423b; border-radius: 8px; background: #19231f; }
+.skill-category-chip { min-height: 34px; padding: 6px 13px; border: 1px solid #46564d; border-radius: 999px; background: #202b25; color: #bdc9c2; font: 600 11px 'DM Sans', sans-serif; white-space: nowrap; cursor: pointer; transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.skill-category-chip:hover { border-color: #8c9e8e; color: #e4ece7; }
+.skill-category-chip.is-selected { border-color: #b99a62; background: #3a382a; color: #f0d99e; box-shadow: inset 0 0 0 1px rgba(208,173,108,.12); }
 .skill-list { display: grid; gap: 9px; }
+.skill-list:empty::before { content: attr(data-empty-message); padding: 18px 12px; border: 1px dashed #46554b; border-radius: 6px; color: #97a49d; font-size: 12px; text-align: center; }
 .skill-row { min-height: 74px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 13px; border: 1px solid #35443d; border-radius: 6px; background: #141d19; cursor: grab; transition: border-color .15s ease, background .15s ease, opacity .15s ease; }
 .skill-row:hover { border-color: #6b806f; background: #1a251f; }
 .skill-row.is-dragging { opacity: .48; }
@@ -256,6 +257,18 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .acquired-skill-list { min-height: 176px; display: grid; align-content: start; gap: 8px; padding: 10px; border: 1px dashed #46554b; border-radius: 6px; transition: border-color .15s ease, background .15s ease; }
 .acquired-skill-list:empty::before { content: 'Déposez ici une compétence à acheter'; display: grid; min-height: 145px; place-items: center; color: #829087; font-size: 9px; text-align: center; }
 .acquired-skill-list.is-drop-target { border-color: #d0ad6c; background: #202d25; }
+.acquired-skill-list:empty::before { content: attr(data-empty-message); }
+.acquired-skill-card { align-items: center; }
+.acquired-rank-summary { margin-top: 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.acquired-total-rank { color: #e2c984; font: 700 12px 'Manrope', sans-serif; }
+.acquired-level-label { color: #aebbb4; font-size: 10px; font-weight: 600; }
+.acquired-level-ranks { min-width: 34px; padding: 4px 8px; border: 1px solid #7c6a3c; border-radius: 5px; background: #383525; color: #f1d88f; font: 800 14px/1 'Manrope', sans-serif; text-align: center; }
+.acquired-skill-purchase { flex-basis: 116px; }
+.acquired-skill-controls { display: flex; align-items: center; gap: 7px; }
+.acquired-skill-controls .remove-rank-button { width: 32px; height: 32px; flex-basis: 32px; }
+.acquired-skill-controls .acquired-add-rank-button { width: 36px; min-height: 32px; flex: 0 0 36px; padding: 0; border-color: #73865e; background: #354632; color: #e9f1d9; font-size: 22px; line-height: 1; }
+.acquired-skill-controls .acquired-add-rank-button:hover:not(:disabled) { border-color: #c0a464; background: #46583a; }
+.acquired-skill-controls .acquired-add-rank-button:disabled { border-color: #39433b; background: #272f29; color: #758078; cursor: not-allowed; }
 .acquired-skill-row { min-width: 0; padding: 10px; display: flex; align-items: center; gap: 9px; border: 1px solid #3c4a41; border-radius: 5px; background: #202a24; }
 .acquired-skill-details { min-width: 0; flex: 1; }
 .acquired-skill-details h3 { overflow: hidden; margin: 0 0 4px; color: #e1e9e3; font: 600 10px 'Manrope', sans-serif; text-overflow: ellipsis; white-space: nowrap; }
@@ -340,8 +353,9 @@ h1 em { color: #a9c4b1; font-style: normal; }
   .skills-list-section { margin-top: 13px; padding: 17px 14px 12px; }
   .skill-purchase-layout { grid-template-columns: 1fr; gap: 0; }
   .skills-list-heading h2 { font-size: 16px; }
-  .skill-filter-row { align-items: flex-start; flex-direction: column; gap: 6px; }
-  .skill-category-filter-wrap { width: 100%; }
+  .skill-category-bar { margin: 13px 0 15px; padding: 8px; gap: 6px; }
+  .skill-category-chip { min-height: 32px; padding-inline: 10px; font-size: 10px; }
+  .acquired-skill-purchase { flex-basis: 100px; }
   .skill-row { align-items: flex-start; padding: 11px 10px; gap: 8px; }
   .skill-primary h3 { font-size: 10px; }
   .skill-purchase { flex-basis: 82px; }
@@ -470,6 +484,11 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .development-total { color: #98753a; }
 :root[data-theme="light"] .development-unit { color: #8b7448; }
 :root[data-theme="light"] .skills-list-section { border-color: #e2e8e4; background: rgba(255,255,255,.8); }
+:root[data-theme="light"] .skill-category-bar { border-color: #e2e8e4; background: #f8faf8; }
+:root[data-theme="light"] .skill-category-chip { border-color: #d5dfd8; background: #fff; color: #53635c; }
+:root[data-theme="light"] .skill-category-chip:hover { border-color: #9eafa3; color: #294a40; }
+:root[data-theme="light"] .skill-category-chip.is-selected { border-color: #bd9854; background: #f6f1e5; color: #6d5425; }
+:root[data-theme="light"] .skill-list:empty::before { border-color: #d6ded8; color: #78847f; }
 :root[data-theme="light"] .skill-row { border-color: #e1e7e2; background: #fff; }
 :root[data-theme="light"] .skill-primary h3 { color: #263b32; }
 :root[data-theme="light"] .skill-characteristic-chip { background: #edf2ee; color: #466050; }
@@ -486,6 +505,11 @@ h1 em { color: #a9c4b1; font-style: normal; }
 :root[data-theme="light"] .buy-rank-button:disabled { border-color: #e3e8e4; background: #f1f3f1; color: #9aa49f; }
 :root[data-theme="light"] .acquired-skill-list { border-color: #d6ded8; }
 :root[data-theme="light"] .acquired-skill-list:empty::before { color: #87938e; }
+:root[data-theme="light"] .acquired-total-rank { color: #82652f; }
+:root[data-theme="light"] .acquired-level-label { color: #6e7c75; }
+:root[data-theme="light"] .acquired-level-ranks { border-color: #d8c18d; background: #f6f1e3; color: #72551d; }
+:root[data-theme="light"] .acquired-skill-controls .acquired-add-rank-button { border-color: #c4d0c7; background: #eaf1eb; color: #294a40; }
+:root[data-theme="light"] .acquired-skill-controls .acquired-add-rank-button:disabled { border-color: #e3e8e4; background: #f1f3f1; color: #9aa49f; }
 :root[data-theme="light"] .acquired-skill-list.is-drop-target { border-color: #bd9854; background: #f6f1e5; }
 :root[data-theme="light"] .acquired-skill-row { border-color: #e0e7e2; background: #f8faf8; }
 :root[data-theme="light"] .acquired-skill-details h3 { color: #263b32; }
@@ -530,8 +554,7 @@ h1 em { color: #a9c4b1; font-style: normal; }
 .allocation-status { font-size: 11px; }
 .development-copy p:last-child { font-size: 12px; }
 .development-copy h2 { font-size: 20px; }
-.skill-filter-row { font-size: 12px; }
-.skill-category-filter-wrap select { font-size: 12px; }
+.skill-category-chip { font-size: 12px; }
 .skill-primary h3 { font-size: 14px; }
 .skill-offer-details, .skill-characteristic-chip, .skill-special-label { font-size: 11px; }
 .skill-special-input { font-size: 12px; }

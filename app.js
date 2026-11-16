@@ -30,6 +30,7 @@ let baseDevelopmentPoints = null;
 let selectedProfessionId = '';
 const acquiredSkills = new Map();
 const skillSpecialValues = new Map();
+let selectedSkillCategory = '';
 const themeSelect = document.querySelector('#theme-select');
 
 function applyTheme(theme) {
@@ -510,20 +511,45 @@ function getMartialArtsRemovalBlocker(skill, state) {
 
 function populateSkillCategoryFilter() {
   const categoryFilter = document.querySelector('#skill-category-filter');
-  const selectedCategory = categoryFilter.value;
   const categories = [...new Set(skills.map((skill) => skill.category).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'fr'));
-  categoryFilter.replaceChildren(new Option('Toutes les catégories', ''));
-  categories.forEach((category) => categoryFilter.add(new Option(category, category)));
-  categoryFilter.value = categories.includes(selectedCategory) ? selectedCategory : '';
+  if (selectedSkillCategory && !categories.includes(selectedSkillCategory)) selectedSkillCategory = '';
+  const filters = [{ label: 'Toutes', value: '' }, ...categories.map((category) => ({ label: category, value: category }))];
+  categoryFilter.replaceChildren(...filters.map(({ label, value }) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'skill-category-chip';
+    chip.textContent = label;
+    chip.dataset.category = value;
+    chip.setAttribute('aria-pressed', String(selectedSkillCategory === value));
+    chip.classList.toggle('is-selected', selectedSkillCategory === value);
+    chip.addEventListener('click', () => {
+      selectedSkillCategory = value;
+      categoryFilter.querySelectorAll('.skill-category-chip').forEach((filterChip) => {
+        const isSelected = filterChip.dataset.category === selectedSkillCategory;
+        filterChip.setAttribute('aria-pressed', String(isSelected));
+        filterChip.classList.toggle('is-selected', isSelected);
+      });
+      renderSkillLists();
+    });
+    return chip;
+  }));
+}
+
+function renderSkillLists() {
+  renderSkillList();
+  renderAcquiredSkills();
 }
 
 function renderSkillList() {
   const skillList = document.querySelector('#skill-list');
-  const selectedCategory = document.querySelector('#skill-category-filter').value;
-  const visibleSkills = selectedCategory
-    ? skills.filter((skill) => skill.category === selectedCategory)
-    : skills;
+  const acquiredSkillIds = new Set([...acquiredSkills.values()].filter((state) => state.rank > 0).map((state) => state.skillId));
+  const visibleSkills = skills.filter((skill) =>
+    (!selectedSkillCategory || skill.category === selectedSkillCategory) && !acquiredSkillIds.has(skill.id)
+  );
+  skillList.dataset.emptyMessage = selectedSkillCategory
+    ? `Aucune compétence disponible dans « ${selectedSkillCategory} ».`
+    : 'Toutes les compétences sont acquises.';
   skillList.replaceChildren(...visibleSkills.map((skill) => {
     const row = document.createElement('article');
     row.className = 'skill-row';
@@ -620,8 +646,8 @@ function renderSkillList() {
     return row;
   }));
   const count = visibleSkills.length;
-  document.querySelector('#skills-count').textContent = selectedCategory
-    ? `${count} / ${skills.length} affichées`
+  document.querySelector('#skills-count').textContent = selectedSkillCategory
+    ? `${count} disponible${count === 1 ? '' : 's'}`
     : `${count} compétence${count > 1 ? 's' : ''}`;
 }
 
@@ -635,7 +661,7 @@ function purchaseSkill(skillId, special = '') {
   }
 
   const key = getSkillKey(skillId, normalizedSpecial);
-  const state = acquiredSkills.get(key) || { skillId, special: normalizedSpecial, rank: 0, spent: 0 };
+  const state = acquiredSkills.get(key) || { skillId, special: normalizedSpecial, rank: 0, spent: 0, levelRanks: 0 };
   const costInfo = getNextSkillCost(skill, state.rank, key);
   const cost = costInfo.cost;
   const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
@@ -655,6 +681,7 @@ function purchaseSkill(skillId, special = '') {
 
   state.rank += 1;
   state.spent += cost;
+  state.levelRanks = (state.levelRanks ?? state.rank - 1) + 1;
   if (isWeaponCategorySkill(skill) && state.categoryCostIndex === undefined) {
     state.categoryCostIndex = costInfo.categoryCostIndex;
   }
@@ -667,29 +694,59 @@ function renderAcquiredSkills() {
   const acquiredList = document.querySelector('#acquired-skill-list');
   acquiredList.replaceChildren();
   let totalRanks = 0;
-  for (const [key, state] of acquiredSkills.entries()) {
+  const visibleEntries = [...acquiredSkills.entries()].filter(([, state]) => {
+    const skill = skills.find((entry) => entry.id === state.skillId);
+    return skill && state.rank > 0 && (!selectedSkillCategory || skill.category === selectedSkillCategory);
+  });
+  acquiredList.dataset.emptyMessage = visibleEntries.length > 0
+    ? ''
+    : selectedSkillCategory
+      ? `Aucune compétence acquise dans « ${selectedSkillCategory} ».`
+      : 'Glissez ici une compétence pour l’acquérir.';
+
+  for (const [key, state] of visibleEntries) {
     const skill = skills.find((entry) => entry.id === state.skillId);
     if (!skill) continue;
     totalRanks += state.rank;
     const row = document.createElement('article');
-    row.className = 'acquired-skill-row';
-    const details = document.createElement('div');
-    details.className = 'acquired-skill-details';
+    row.className = 'skill-row acquired-skill-card';
+    row.dataset.skillId = skill.id;
+    const primary = document.createElement('div');
+    primary.className = 'skill-primary';
     const name = document.createElement('h3');
     name.textContent = skill.name;
     const subtitle = document.createElement('p');
+    subtitle.className = 'skill-offer-details';
     subtitle.textContent = isWeaponCategorySkill(skill)
       ? `${skill.category} · Coût ${getSkillCostDefinition(skill, state.categoryCostIndex).join('/')}`
       : state.special ? `${state.special} · ${skill.category}` : skill.category;
-    details.append(name, subtitle);
+    primary.append(name, subtitle);
 
-    const rankInfo = document.createElement('div');
-    rankInfo.className = 'acquired-rank-info';
+    const rankSummary = document.createElement('div');
+    rankSummary.className = 'acquired-rank-summary';
     const rank = document.createElement('strong');
-    rank.textContent = `Rang ${state.rank}`;
-    const spent = document.createElement('span');
-    spent.textContent = `${state.spent} PD`;
-    rankInfo.append(rank, spent);
+    rank.className = 'acquired-total-rank';
+    rank.textContent = `Rang total : ${state.rank}`;
+    const levelRanks = state.levelRanks ?? state.rank;
+    const levelRankLabel = document.createElement('span');
+    levelRankLabel.className = 'acquired-level-label';
+    levelRankLabel.textContent = 'À ce niveau';
+    const levelRankBadge = document.createElement('span');
+    levelRankBadge.className = 'acquired-level-ranks';
+    levelRankBadge.textContent = `+${levelRanks}`;
+    levelRankBadge.setAttribute('aria-label', `${levelRanks} rang${levelRanks === 1 ? '' : 's'} acheté${levelRanks === 1 ? '' : 's'} à ce niveau`);
+    rankSummary.append(rank, levelRankLabel, levelRankBadge);
+    primary.append(rankSummary);
+
+    const purchase = document.createElement('div');
+    purchase.className = 'skill-purchase acquired-skill-purchase';
+    const costBadge = document.createElement('span');
+    costBadge.className = 'skill-cost-badge';
+    costBadge.textContent = getSkillCostDefinition(skill, state.categoryCostIndex).join('/') || '—';
+    purchase.append(costBadge);
+
+    const controls = document.createElement('div');
+    controls.className = 'acquired-skill-controls';
 
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
@@ -711,11 +768,31 @@ function renderAcquiredSkills() {
       if (typeof refund !== 'number') return;
       state.rank -= 1;
       state.spent -= refund;
+      state.levelRanks = Math.max(0, (state.levelRanks ?? state.rank + 1) - 1);
       if (state.rank === 0) acquiredSkills.delete(key);
       document.querySelector('#skill-purchase-status').textContent = `Dernier rang retiré de ${skill.name}. ${refund} PD récupérés.`;
       renderDevelopmentPoints();
     });
-    row.append(details, rankInfo, removeButton);
+
+    const nextCost = getNextSkillCost(skill, state.rank, key).cost;
+    const tierBlocker = getMartialArtsPurchaseBlocker(skill);
+    const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
+    const addButton = document.createElement('button');
+    addButton.type = 'button';
+    addButton.className = 'buy-rank-button acquired-add-rank-button';
+    addButton.textContent = '+';
+    addButton.disabled = nextCost === undefined || nextCost === null || baseDevelopmentPoints === null || nextCost > remaining || Boolean(tierBlocker);
+    addButton.title = tierBlocker
+      ? `Achetez d’abord le rang ${tierBlocker.requiredRank} du tier ${tierBlocker.tier}.`
+      : nextCost === undefined || nextCost === null
+        ? 'Aucun rang supplémentaire disponible'
+        : `Acheter un rang pour ${nextCost} PD`;
+    addButton.setAttribute('aria-label', `Acheter un rang supplémentaire de ${skill.name}${nextCost === undefined ? '' : ` pour ${nextCost} PD`}`);
+    addButton.addEventListener('click', () => purchaseSkill(skill.id, state.special));
+
+    controls.append(removeButton, addButton);
+    purchase.append(controls);
+    row.append(primary, purchase);
     acquiredList.append(row);
   }
   document.querySelector('#acquired-count').textContent = `${totalRanks} rang${totalRanks === 1 ? '' : 's'}`;
@@ -779,7 +856,7 @@ async function loadRulesData() {
       if (missingCharacteristics.length > 0) throw new Error(`Caractéristiques inconnues pour ${skill.name} : ${missingCharacteristics.join(', ')}`);
     });
     populateSkillCategoryFilter();
-    renderSkillList();
+    renderSkillLists();
     professionSelect.disabled = false;
     raceSelect.disabled = false;
     updateStepAvailability();
@@ -794,7 +871,6 @@ async function loadRulesData() {
 }
 
 document.querySelector('#new-character').addEventListener('click', () => showView('creation'));
-document.querySelector('#skill-category-filter').addEventListener('change', renderSkillList);
 document.querySelector('#back-home').addEventListener('click', () => showView('home'));
 document.querySelector('#back-profession').addEventListener('click', () => showView('creation'));
 document.querySelector('#back-characteristics').addEventListener('click', () => showView('characteristics'));
@@ -832,6 +908,7 @@ professionSelect.addEventListener('change', () => {
   }
   selectedProfessionId = professionSelect.value;
   renderProfession(professionsById.get(professionSelect.value));
+  renderDevelopmentPoints();
   updateStepAvailability();
 });
 raceSelect.addEventListener('change', () => {
