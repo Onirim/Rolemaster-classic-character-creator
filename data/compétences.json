@@ -350,6 +350,14 @@
       "category": "Développement corporel",
       "type": "Principale",
 	  "special" : "developpement-corporel"
+    },
+	{
+      "id": "acrobaties",
+      "name": "Acrobaties",
+      "characteristics": ["AG/RP"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
     }
   ]
 }

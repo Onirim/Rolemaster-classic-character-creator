@@ -376,12 +376,9 @@ function renderAllocation() {
 }
 
 function renderDevelopmentPoints() {
-  const totalElement = document.querySelector('#development-points-total');
   if (characteristicsInOrder.length !== 10 || rollAssignments.size !== 10 || characteristicBonusRows.length === 0) {
     baseDevelopmentPoints = null;
-    totalElement.textContent = '—';
-    document.querySelector('#development-points-base').textContent = '—';
-    document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+    updateDevelopmentPoolDisplay();
     renderSkillList();
     renderAcquiredSkills();
     return;
@@ -392,9 +389,7 @@ function renderDevelopmentPoints() {
     const rollIndex = rollAssignments.get(characteristic.id);
     if (rollIndex === undefined) {
       baseDevelopmentPoints = null;
-      totalElement.textContent = '—';
-      document.querySelector('#development-points-base').textContent = '—';
-      document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+      updateDevelopmentPoolDisplay();
       renderSkillList();
       renderAcquiredSkills();
       return;
@@ -403,9 +398,7 @@ function renderDevelopmentPoints() {
     const bonusRow = characteristicBonusRows.find((row) => temporary >= row.min && (row.max === null || temporary <= row.max));
     if (!bonusRow) {
       baseDevelopmentPoints = null;
-      totalElement.textContent = '—';
-      document.querySelector('#development-points-base').textContent = '—';
-      document.querySelector('#development-points-spent').textContent = String(getTotalSkillSpend());
+      updateDevelopmentPoolDisplay();
       renderSkillList();
       renderAcquiredSkills();
       return;
@@ -413,16 +406,37 @@ function renderDevelopmentPoints() {
     total += bonusRow.developmentPoints;
   }
   baseDevelopmentPoints = total;
-  const spent = getTotalSkillSpend();
-  document.querySelector('#development-points-base').textContent = String(total);
-  document.querySelector('#development-points-spent').textContent = String(spent);
-  totalElement.textContent = String(total - spent);
+  updateDevelopmentPoolDisplay();
   renderSkillList();
   renderAcquiredSkills();
 }
 
-function getTotalSkillSpend() {
-  return [...acquiredSkills.values()].reduce((sum, entry) => sum + entry.spent, 0);
+function getSkillPoolType(skill) {
+  return skill.type === 'Secondaire' ? 'Secondaire' : 'Principale';
+}
+
+function getSkillSpend(poolType) {
+  return [...acquiredSkills.values()].reduce((sum, state) => {
+    const skill = skills.find((entry) => entry.id === state.skillId);
+    return skill && getSkillPoolType(skill) === poolType ? sum + state.spent : sum;
+  }, 0);
+}
+
+function getRemainingDevelopmentPoints(poolType) {
+  return baseDevelopmentPoints === null ? null : baseDevelopmentPoints - getSkillSpend(poolType);
+}
+
+function updateDevelopmentPoolDisplay() {
+  document.querySelector('#development-points-base').textContent = baseDevelopmentPoints === null ? '—' : String(baseDevelopmentPoints);
+  const pools = [
+    { type: 'Principale', remainingId: 'development-points-total', spentId: 'development-points-spent' },
+    { type: 'Secondaire', remainingId: 'development-points-secondary-total', spentId: 'development-points-secondary-spent' }
+  ];
+  pools.forEach(({ type, remainingId, spentId }) => {
+    const remaining = getRemainingDevelopmentPoints(type);
+    document.querySelector(`#${remainingId}`).textContent = remaining === null ? '—' : String(remaining);
+    document.querySelector(`#${spentId}`).textContent = String(getSkillSpend(type));
+  });
 }
 
 function isWeaponCategorySkill(skill) {
@@ -575,7 +589,7 @@ function getSpellListSkills(profession) {
       name: spellList.name,
       characteristics: ['aucune'],
       category: 'Listes de sorts',
-      type: spellList.type,
+      type: 'Principale',
       special: 'none',
       costReference: 'listes-sort',
       spellListId: spellList.id,
@@ -702,7 +716,8 @@ function renderSkillList() {
       const cost = costInfo.cost;
       const missingSpecial = Boolean(needsCustomSkillSpecial(skill) && !special);
       const noCost = cost === undefined || cost === null;
-      const notEnough = typeof cost === 'number' && baseDevelopmentPoints !== null && cost > baseDevelopmentPoints - getTotalSkillSpend();
+      const remaining = getRemainingDevelopmentPoints(getSkillPoolType(skill));
+      const notEnough = typeof cost === 'number' && remaining !== null && cost > remaining;
       const tierBlocker = getMartialArtsPurchaseBlocker(skill);
       const costDefinition = getSkillCostDefinition(skill, costInfo.categoryCostIndex).join('/');
       costBadge.textContent = costDefinition || '—';
@@ -757,7 +772,8 @@ function purchaseSkill(skillId, special = '') {
   const state = acquiredSkills.get(key) || { skillId, special: normalizedSpecial, rank: 0, spent: 0, levelRanks: 0 };
   const costInfo = getNextSkillCost(skill, state.rank, key);
   const cost = costInfo.cost;
-  const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
+  const poolType = getSkillPoolType(skill);
+  const remaining = getRemainingDevelopmentPoints(poolType);
   const tierBlocker = getMartialArtsPurchaseBlocker(skill);
   if (tierBlocker) {
     document.querySelector('#skill-purchase-status').textContent = `Achetez d’abord le rang ${tierBlocker.requiredRank} du tier ${tierBlocker.tier} avant de progresser dans ce tier.`;
@@ -768,7 +784,7 @@ function purchaseSkill(skillId, special = '') {
     return;
   }
   if (baseDevelopmentPoints === null || cost > remaining) {
-    document.querySelector('#skill-purchase-status').textContent = `Points de Développement insuffisants : ${cost} PD sont nécessaires.`;
+    document.querySelector('#skill-purchase-status').textContent = `Points de Développement insuffisants dans le pool ${poolType.toLocaleLowerCase('fr-FR')} : ${cost} PD sont nécessaires.`;
     return;
   }
 
@@ -779,7 +795,7 @@ function purchaseSkill(skillId, special = '') {
     state.categoryCostIndex = costInfo.categoryCostIndex;
   }
   acquiredSkills.set(key, state);
-  document.querySelector('#skill-purchase-status').textContent = `${skill.name}${normalizedSpecial ? ` (${normalizedSpecial})` : ''} atteint le rang ${state.rank} pour ${cost} PD.`;
+  document.querySelector('#skill-purchase-status').textContent = `${skill.name}${normalizedSpecial ? ` (${normalizedSpecial})` : ''} atteint le rang ${state.rank} pour ${cost} PD du pool ${poolType.toLocaleLowerCase('fr-FR')}.`;
   renderDevelopmentPoints();
 }
 
@@ -813,7 +829,7 @@ function renderAcquiredSkills() {
     subtitle.textContent = isWeaponCategorySkill(skill)
       ? `${skill.category} · Coût ${getSkillCostDefinition(skill, state.categoryCostIndex).join('/')}`
       : skill.spellListId ? `${skill.spellListType} · ${skill.spellListRealm}`
-      : state.special ? `${state.special} · ${skill.category}` : skill.category;
+      : state.special ? `${state.special} · ${skill.type} · ${skill.category}` : `${skill.type} · ${skill.category}`;
     primary.append(name, subtitle);
 
     const rankSummary = document.createElement('div');
@@ -870,12 +886,12 @@ function renderAcquiredSkills() {
 
     const nextCost = getNextSkillCost(skill, state.rank, key).cost;
     const tierBlocker = getMartialArtsPurchaseBlocker(skill);
-    const remaining = baseDevelopmentPoints === null ? 0 : baseDevelopmentPoints - getTotalSkillSpend();
+    const remaining = getRemainingDevelopmentPoints(getSkillPoolType(skill));
     const addButton = document.createElement('button');
     addButton.type = 'button';
     addButton.className = 'buy-rank-button acquired-add-rank-button';
     addButton.textContent = '+';
-    addButton.disabled = nextCost === undefined || nextCost === null || baseDevelopmentPoints === null || nextCost > remaining || Boolean(tierBlocker);
+    addButton.disabled = nextCost === undefined || nextCost === null || remaining === null || nextCost > remaining || Boolean(tierBlocker);
     addButton.title = tierBlocker
       ? `Achetez d’abord le rang ${tierBlocker.requiredRank} du tier ${tierBlocker.tier}.`
       : nextCost === undefined || nextCost === null

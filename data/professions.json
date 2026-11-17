@@ -32,7 +32,8 @@
         { "name": "mouvements-adrenaux", "costs": ["2/6"] },
         { "name": "defense-adrenale", "costs": ["20"] },
         { "name": "arts-martiaux", "costs": ["3/7"] },
-        { "name": "developpement-corporel", "costs": ["1/3"] }
+        { "name": "developpement-corporel", "costs": ["1/3"] },
+		{ "name": "acrobaties", "costs": ["2/5"] }
       ]
     }
   ]
