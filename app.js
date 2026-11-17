@@ -416,6 +416,21 @@ function getSkillPoolType(skill) {
   return skill.type === 'Secondaire' ? 'Secondaire' : 'Principale';
 }
 
+function getSkillCharacteristicReferences(skill) {
+  if (skill.special !== 'royaume-pouvoir') return skill.characteristics;
+
+  const profession = professionsById.get(professionSelect.value);
+  const configuredRealmStat = profession?.realmStat;
+  const realmStat = typeof configuredRealmStat === 'string' &&
+      configuredRealmStat.toLocaleLowerCase('fr-FR') === 'none'
+    ? selectedPowerRealmStat
+    : configuredRealmStat;
+
+  return realmStat && characteristicsById.has(realmStat)
+    ? [realmStat]
+    : skill.characteristics;
+}
+
 function getSkillSpend(poolType) {
   return [...acquiredSkills.values()].reduce((sum, state) => {
     const skill = skills.find((entry) => entry.id === state.skillId);
@@ -685,7 +700,7 @@ function renderSkillList() {
 
     const characteristics = document.createElement('div');
     characteristics.className = 'skill-characteristics';
-    skill.characteristics.forEach((reference) => {
+    getSkillCharacteristicReferences(skill).forEach((reference) => {
       const chip = document.createElement('span');
       chip.className = 'skill-characteristic-chip';
       chip.textContent = reference.split('/').map((id) => {

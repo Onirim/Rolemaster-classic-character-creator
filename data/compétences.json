@@ -358,6 +358,318 @@
       "category": "Sport",
       "type": "Secondaire",
 	  "special" : "none"
+    },
+	{
+      "id": "alimentation",
+      "name": "Alimentation",
+      "characteristics": ["IT/RS"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "chant",
+      "name": "Chant",
+      "characteristics": ["PR/IT"],
+      "category": "Linguistique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "chutes",
+      "name": "Chutes",
+      "characteristics": ["AD/AG"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "comedie",
+      "name": "Comédie",
+      "characteristics": ["PR/EM"],
+      "category": "Subterfuge",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "commerce",
+      "name": "Commerce",
+      "characteristics": ["RS/EM"],
+      "category": "Linguistique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "comm-signaux",
+      "name": "Communication par signaux",
+      "characteristics": ["ME/AD"],
+      "category": "Linguistique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "constr-pieges",
+      "name": "Construction de pièges",
+      "characteristics": ["RS/EM"],
+      "category": "Subterfuge",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "contorsionnisme",
+      "name": "Contorsionnisme",
+      "characteristics": ["AG/AD"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "culbutes",
+      "name": "Culbutes",
+      "characteristics": ["AG/AD"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "eloquence-public",
+      "name": "Éloquence en public",
+      "characteristics": ["EM/PR"],
+      "category": "Linguistique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "expression-corporelle",
+      "name": "Expression corporelle",
+      "characteristics": ["AG/IT"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "falsification",
+      "name": "Falsification",
+      "characteristics": ["AD/RS"],
+      "category": "Subterfuge",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "flecherie",
+      "name": "Flècherie",
+      "characteristics": ["AG/AD"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "forge",
+      "name": "Forge",
+      "characteristics": ["FO/AG"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "frenesie",
+      "name": "Frénésie",
+      "characteristics": ["EM/AD"],
+      "category": "Concentration",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "glisse",
+      "name": "Glisse",
+      "characteristics": ["AG/AD"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "inconscience",
+      "name": "Inconscience",
+      "characteristics": ["AG/RP"],
+      "category": "Combat",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "jeu",
+      "name": "Jeu",
+      "characteristics": ["ME/PR"],
+      "category": "Social",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "maitrise-cordes",
+      "name": "Maîtrise des cordes",
+      "characteristics": ["ME/AG"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "maitrise-sorts",
+      "name": "Maîtrise des sorts",
+      "characteristics": ["variable"],
+      "category": "Magique",
+      "type": "Secondaire",
+	  "special" : "royaume-pouvoir"
+    },
+	{
+      "id": "marine",
+      "name": "Marine",
+      "characteristics": ["EM/IT"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "math-base",
+      "name": "Mathématiques",
+      "characteristics": ["RS/ME"],
+      "category": "Académique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "meditation",
+      "name": "Méditation",
+      "characteristics": ["PR/AD"],
+      "category": "Concentration",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "meteo",
+      "name": "Météo",
+      "characteristics": ["IT/EM"],
+      "category": "Académique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "musique",
+      "name": "Musique",
+      "characteristics": ["AG/EM"],
+      "category": "Linguistique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "navigation",
+      "name": "Navigation",
+      "characteristics": ["RS/IT"],
+      "category": "Académique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "navigation-rame",
+      "name": "Navigation à la rame",
+      "characteristics": ["AD/FO"],
+      "category": "Sport",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "pistage",
+      "name": "Pistage",
+      "characteristics": ["IT/RS"],
+      "category": "Perception",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "premiers-soins",
+      "name": "Premiers soins",
+      "characteristics": ["AD/EM"],
+      "category": "Médical",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "reperage-etoiles",
+      "name": "Repérage aux étoiles",
+      "characteristics": ["IT/ME"],
+      "category": "Académique",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "sculpture",
+      "name": "Sculpture",
+      "characteristics": ["AG/EM"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "seduction",
+      "name": "Séduction",
+      "characteristics": ["EM/PR"],
+      "category": "Social",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "soin-animaux",
+      "name": "Soins d'Animaux",
+      "characteristics": ["EM/RS"],
+      "category": "Médical",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "speleologie",
+      "name": "Spéléologie",
+      "characteristics": ["AD/RS"],
+      "category": "Extérieur",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "survie-nature",
+      "name": "Survie dans la nature",
+      "characteristics": ["IT/ME"],
+      "category": "Extérieur",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "artisanat-pierres",
+      "name": "Artisanat de la pierre",
+      "characteristics": ["AD/AG"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "travail-cuir",
+      "name": "Travail du cuir",
+      "characteristics": ["AG/RS"],
+      "category": "Général",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "troupeaux",
+      "name": "Troupeaux",
+      "characteristics": ["EM/PR"],
+      "category": "Extérieur",
+      "type": "Secondaire",
+	  "special" : "none"
+    },
+	{
+      "id": "trucages",
+      "name": "Trucages",
+      "characteristics": ["PR/RP"],
+      "category": "Subterfuge",
+      "type": "Secondaire",
+	  "special" : "none"
     }
   ]
 }
