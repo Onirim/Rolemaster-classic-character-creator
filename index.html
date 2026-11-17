@@ -250,20 +250,20 @@
             <div class="development-icon" aria-hidden="true">✦</div>
             <div class="development-copy">
               <p class="section-kicker">BUDGET DE L’ADOLESCENCE</p>
-              <h2 id="development-title">Deux pools de PD indépendants</h2>
-              <p>Chaque pool dispose de <span id="development-points-base">—</span> PD.</p>
+              <h2 id="development-title">Choisissez un pool de compétences</h2>
+              <p>Chaque pool dispose de <span id="development-points-base">—</span> PD indépendants.</p>
             </div>
             <div class="development-pools">
-              <article class="development-pool primary-pool">
+              <button class="development-pool primary-pool is-selected" id="primary-skills-pool" type="button" data-pool-type="Principale" aria-pressed="true" aria-label="Afficher les compétences principales">
                 <span class="development-pool-label">Compétences principales</span>
                 <strong><span id="development-points-total">—</span><small>PD restants</small></strong>
                 <span class="development-pool-spent">Dépensés : <span id="development-points-spent">0</span> PD</span>
-              </article>
-              <article class="development-pool secondary-pool">
+              </button>
+              <button class="development-pool secondary-pool" id="secondary-skills-pool" type="button" data-pool-type="Secondaire" aria-pressed="false" aria-label="Afficher les compétences secondaires">
                 <span class="development-pool-label">Compétences secondaires</span>
                 <strong><span id="development-points-secondary-total">—</span><small>PD restants</small></strong>
                 <span class="development-pool-spent">Dépensés : <span id="development-points-secondary-spent">0</span> PD</span>
-              </article>
+              </button>
             </div>
           </section>
 

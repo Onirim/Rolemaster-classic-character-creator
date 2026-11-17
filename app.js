@@ -33,6 +33,7 @@ let selectedProfessionId = '';
 const acquiredSkills = new Map();
 const skillSpecialValues = new Map();
 let selectedSkillCategory = '';
+let selectedSkillType = 'Principale';
 let selectedPowerRealmStat = '';
 const powerRealms = [
   { name: 'Théurgie', statId: 'IT' },
@@ -641,6 +642,16 @@ function populateSkillCategoryFilter() {
   }));
 }
 
+function selectSkillPool(poolType) {
+  selectedSkillType = poolType;
+  document.querySelectorAll('.development-pool[data-pool-type]').forEach((poolButton) => {
+    const isSelected = poolButton.dataset.poolType === selectedSkillType;
+    poolButton.classList.toggle('is-selected', isSelected);
+    poolButton.setAttribute('aria-pressed', String(isSelected));
+  });
+  renderSkillLists();
+}
+
 function renderSkillLists() {
   renderSkillList();
   renderAcquiredSkills();
@@ -650,11 +661,13 @@ function renderSkillList() {
   const skillList = document.querySelector('#skill-list');
   const acquiredSkillIds = new Set([...acquiredSkills.values()].filter((state) => state.rank > 0).map((state) => state.skillId));
   const visibleSkills = skills.filter((skill) =>
-    (!selectedSkillCategory || skill.category === selectedSkillCategory) && !acquiredSkillIds.has(skill.id)
+    getSkillPoolType(skill) === selectedSkillType &&
+    (!selectedSkillCategory || skill.category === selectedSkillCategory) &&
+    !acquiredSkillIds.has(skill.id)
   );
   skillList.dataset.emptyMessage = selectedSkillCategory
-    ? `Aucune compétence disponible dans « ${selectedSkillCategory} ».`
-    : 'Toutes les compétences sont acquises.';
+    ? `Aucune compétence ${selectedSkillType.toLocaleLowerCase('fr-FR')} disponible dans « ${selectedSkillCategory} ».`
+    : `Aucune compétence ${selectedSkillType.toLocaleLowerCase('fr-FR')} disponible.`;
   skillList.replaceChildren(...visibleSkills.map((skill) => {
     const row = document.createElement('article');
     row.className = 'skill-row';
@@ -805,13 +818,14 @@ function renderAcquiredSkills() {
   let totalRanks = 0;
   const visibleEntries = [...acquiredSkills.entries()].filter(([, state]) => {
     const skill = skills.find((entry) => entry.id === state.skillId);
-    return skill && state.rank > 0 && (!selectedSkillCategory || skill.category === selectedSkillCategory);
+    return skill && getSkillPoolType(skill) === selectedSkillType && state.rank > 0 &&
+      (!selectedSkillCategory || skill.category === selectedSkillCategory);
   });
   acquiredList.dataset.emptyMessage = visibleEntries.length > 0
     ? ''
     : selectedSkillCategory
       ? `Aucune compétence acquise dans « ${selectedSkillCategory} ».`
-      : 'Glissez ici une compétence pour l’acquérir.';
+      : `Aucune compétence ${selectedSkillType.toLocaleLowerCase('fr-FR')} acquise pour le moment.`;
 
   for (const [key, state] of visibleEntries) {
     const skill = skills.find((entry) => entry.id === state.skillId);
@@ -990,6 +1004,8 @@ document.querySelector('#back-profession').addEventListener('click', () => showV
 document.querySelector('#back-characteristics').addEventListener('click', () => showView('characteristics'));
 continueButton.addEventListener('click', () => showView('characteristics'));
 continueSkillsButton.addEventListener('click', () => showView('skills'));
+document.querySelector('#primary-skills-pool').addEventListener('click', () => selectSkillPool('Principale'));
+document.querySelector('#secondary-skills-pool').addEventListener('click', () => selectSkillPool('Secondaire'));
 homeStep.addEventListener('click', () => showView('home'));
 professionStep.addEventListener('click', () => showView('creation'));
 characteristicsStep.addEventListener('click', () => showView('characteristics'));
